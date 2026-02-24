@@ -70,4 +70,4 @@ def _run(base_directory: pathlib.Path, limit: int | None = 1_000) -> None:
 if __name__ == "__main__":
     repo_head = pathlib.Path(__file__).parent.parent
 
-    _run(repo_head, limit=20)
+    _run(repo_head)
