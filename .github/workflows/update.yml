@@ -1,0 +1,83 @@
+name: Update
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  GITHUB_TOKEN: ${{ secrets._GITHUB_API_KEY }}
+  REPO_DIR: ${{ github.event.repository.name }}
+
+jobs:
+  Update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check for running workflows
+        env:
+          GH_TOKEN: ${{ secrets._GITHUB_API_KEY }}
+        run: |
+          RUNNING_COUNT=$(gh run list --workflow "${{ github.workflow }}" --status in_progress --json databaseId | jq '. | length')
+
+          if [ "$RUNNING_COUNT" -gt 1 ]; then
+            echo "Another run is already in progress. Cancelling this run..."
+            gh run cancel ${{ github.run_id }}
+            # Sleep to allow cancellation to propagate
+            sleep 60
+          fi
+
+      - name: Clone
+        run: git clone -b main https://x-access-token:${{ secrets._GITHUB_API_KEY }}@github.com/dandi-cache/$REPO_DIR.git
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.13
+
+      - name: Run update
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          pip install PyYaml requests remfile h5py zarr pynwb dandi spikeinterface
+
+          python $REPO_DIR/code/update.py
+
+      - name: Upload YAML
+        run: |
+          git -C $REPO_DIR add .
+          git -C $REPO_DIR commit --message "update" || true  # || true in case of no changes
+          git -C $REPO_DIR push
+
+      - name: Run minification
+        run: python $REPO_DIR/code/minify.py
+
+      - name: Upload minification
+        run: |
+          git -C $REPO_DIR push origin --delete min || true  # || true in case branch doesn't exist yet
+
+          git -C $REPO_DIR checkout -b min
+          git -C $REPO_DIR add .
+          git -C $REPO_DIR commit --message "update min" || true  # || true in case of no changes
+          git -C $REPO_DIR push --set-upstream origin min
+
+  NotifyOnFailure:
+    runs-on: ubuntu-latest
+    needs: [ Update ]
+    if: ${{ always() && failure() }}
+    steps:
+      - uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "CI Failure: DANDI Cache: Qualifying AIND Content IDs"
+          to: cody.c.baker.phd@gmail.com  # Add more with comma separation (no spaces)
+          from: dandi-cache
+          body: "Please check the latest run of the DANDI Cache update: https://github.com/dandi-cache/qualifying-aind-content-ids/actions/workflows/update.yml"
