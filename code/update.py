@@ -13,7 +13,7 @@ import requests
 import yaml
 
 
-def _run(base_directory: pathlib.Path, limit: int | None = 1_000) -> None:
+def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     url = "https://raw.githubusercontent.com/dandi-cache/content-id-to-nwb-files/refs/heads/min/derivatives/content_id_to_nwb_files.min.json.gz"
     response = requests.get(url)
     content_id_to_dandiset_paths = json.loads(gzip.decompress(data=response.content))
@@ -103,4 +103,4 @@ def _run(base_directory: pathlib.Path, limit: int | None = 1_000) -> None:
 if __name__ == "__main__":
     repo_head = pathlib.Path(__file__).parent.parent
 
-    _run(repo_head, limit=50)
+    _run(repo_head, limit=10_000)
