@@ -2,6 +2,7 @@ import gzip
 import itertools
 import json
 import pathlib
+import traceback
 
 import dandi.dandiapi
 import h5py
@@ -11,7 +12,7 @@ import remfile
 import requests
 import yaml
 
-import traceback
+
 def _run(base_directory: pathlib.Path, limit: int | None = 1_000) -> None:
     url = "https://raw.githubusercontent.com/dandi-cache/content-id-to-nwb-files/refs/heads/min/derivatives/content_id_to_nwb_files.min.json.gz"
     response = requests.get(url)
@@ -49,7 +50,7 @@ def _run(base_directory: pathlib.Path, limit: int | None = 1_000) -> None:
             with dandi_api_errors_log_file_path.open(mode="a") as file_stream:
                 message = (
                     f"Error retrieving information about file at path {first_path} in dandiset ID {dandiset_id} "
-                    "with `{content_id=}`!\n\n" 
+                    "with `{content_id=}`!\n\n"
                     f"{type(exception)}:{str(exception)}\n\n"
                     f"{traceback.format_exc()}"
                 )
@@ -99,4 +100,4 @@ def _run(base_directory: pathlib.Path, limit: int | None = 1_000) -> None:
 if __name__ == "__main__":
     repo_head = pathlib.Path(__file__).parent.parent
 
-    _run(repo_head)
+    _run(repo_head, limit=50)
