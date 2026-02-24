@@ -1,0 +1,131 @@
+Error opening file at path sub-e1ceadd7-e3c2-4fd9-98bc-148f17dd60c6/sub-e1ceadd7-e3c2-4fd9-98bc-148f17dd60c6_ses-1dfdc01b-c871-4e3d-a139-203a4eefe8f4_behavior+image.nwb in dandiset ID 000045 from URL https://dandiarchive.s3.amazonaws.com/blobs/353/80f/35380ff6-da87-4db0-ac0b-f97c5cb582b3 with `{content_id=}`!
+
+<class 'hdmf.build.errors.ConstructError'>:(root/acquisition/_iblmic_audioSpectrogram/bands GroupBuilder {'attributes': {'colnames': array(['freq'], dtype=object), 'description': 'spectogram frequencies', 'namespace': 'core', 'neurodata_type': 'FrequencyBandsTable', 'object_id': '69439208-4537-481c-8680-42d85f56930e'}, 'groups': {}, 'datasets': {'freq': root/acquisition/_iblmic_audioSpectrogram/bands/freq DatasetBuilder {'attributes': {'description': 'frequency value', 'namespace': 'hdmf-common', 'neurodata_type': 'VectorData', 'object_id': '09b2a4ac-9440-4cd5-88d3-32e8fa86c57b'}, 'data': <HDF5 dataset "freq": shape (257,), type "<f4">}, 'id': root/acquisition/_iblmic_audioSpectrogram/bands/id DatasetBuilder {'attributes': {'namespace': 'hdmf-common', 'neurodata_type': 'ElementIdentifiers', 'object_id': 'd200dc55-ebcd-4715-9734-f1e404a0c53d'}, 'data': <HDF5 dataset "id": shape (257,), type "<i4">}}, 'links': {}}, "Could not construct FrequencyBandsTable object due to: column must have the same number of rows as 'id'")
+
+Traceback (most recent call last):
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\objectmapper.py", line 1391, in construct
+    obj = self.__new_container__(cls, builder.source, parent, builder.attributes.get(self.__spec.id_key()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\objectmapper.py", line 1404, in __new_container__
+    obj.__init__(**kwargs)
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\utils.py", line 578, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\pynwb\misc.py", line 272, in __init__
+    super().__init__(**kwargs)
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\utils.py", line 578, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\common\table.py", line 518, in __init__
+    self._init_class_columns()
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\common\table.py", line 543, in _init_class_columns
+    self.add_column(name=col['name'],
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\utils.py", line 578, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\common\table.py", line 969, in add_column
+    raise ValueError("column must have the same number of rows as 'id'")
+ValueError: column must have the same number of rows as 'id'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\GitHub\dandi-cache\qualifying-aind-content-ids\code\update.py", line 70, in _run
+    io = pynwb.NWBHDF5IO(file=h5py_file)
+              ^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\utils.py", line 578, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\pynwb\__init__.py", line 489, in read
+    file = super().read(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\backends\hdf5\h5tools.py", line 458, in read
+    return super().read(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\utils.py", line 578, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\backends\io.py", line 60, in read
+    container = self.__manager.construct(f_builder)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\utils.py", line 578, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\manager.py", line 286, in construct
+    result = self.__type_map.construct(builder, self, None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\utils.py", line 578, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\manager.py", line 814, in construct
+    return obj_mapper.construct(builder, build_manager, parent)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\utils.py", line 578, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\pynwb\io\file.py", line 161, in construct
+    return super().construct(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\utils.py", line 578, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\objectmapper.py", line 1361, in construct
+    subspecs = self.__get_subspec_values(builder, self.spec, manager)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\objectmapper.py", line 1290, in __get_subspec_values
+    self.__get_sub_builders(groups, spec.groups, manager, ret)
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\objectmapper.py", line 1341, in __get_sub_builders
+    ret.update(self.__get_subspec_values(sub_builder, subspec, manager))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\objectmapper.py", line 1290, in __get_subspec_values
+    self.__get_sub_builders(groups, spec.groups, manager, ret)
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\objectmapper.py", line 1333, in __get_sub_builders
+    sub_builder = self.__flatten(sub_builder, subspec, manager)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\objectmapper.py", line 1346, in __flatten
+    tmp = [manager.construct(b) for b in sub_builder]
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\objectmapper.py", line 1346, in <listcomp>
+    tmp = [manager.construct(b) for b in sub_builder]
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\utils.py", line 578, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\manager.py", line 282, in construct
+    result = self.__type_map.construct(builder, self, parent)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\utils.py", line 578, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\manager.py", line 814, in construct
+    return obj_mapper.construct(builder, build_manager, parent)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\utils.py", line 578, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\objectmapper.py", line 1361, in construct
+    subspecs = self.__get_subspec_values(builder, self.spec, manager)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\objectmapper.py", line 1290, in __get_subspec_values
+    self.__get_sub_builders(groups, spec.groups, manager, ret)
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\objectmapper.py", line 1343, in __get_sub_builders
+    ret[subspec] = manager.construct(sub_builder)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\utils.py", line 578, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\manager.py", line 282, in construct
+    result = self.__type_map.construct(builder, self, parent)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\utils.py", line 578, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\manager.py", line 814, in construct
+    return obj_mapper.construct(builder, build_manager, parent)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\utils.py", line 578, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\hdmf\build\objectmapper.py", line 1395, in construct
+    raise ConstructError(builder, msg) from ex
+hdmf.build.errors.ConstructError: (root/acquisition/_iblmic_audioSpectrogram/bands GroupBuilder {'attributes': {'colnames': array(['freq'], dtype=object), 'description': 'spectogram frequencies', 'namespace': 'core', 'neurodata_type': 'FrequencyBandsTable', 'object_id': '69439208-4537-481c-8680-42d85f56930e'}, 'groups': {}, 'datasets': {'freq': root/acquisition/_iblmic_audioSpectrogram/bands/freq DatasetBuilder {'attributes': {'description': 'frequency value', 'namespace': 'hdmf-common', 'neurodata_type': 'VectorData', 'object_id': '09b2a4ac-9440-4cd5-88d3-32e8fa86c57b'}, 'data': <HDF5 dataset "freq": shape (257,), type "<f4">}, 'id': root/acquisition/_iblmic_audioSpectrogram/bands/id DatasetBuilder {'attributes': {'namespace': 'hdmf-common', 'neurodata_type': 'ElementIdentifiers', 'object_id': 'd200dc55-ebcd-4715-9734-f1e404a0c53d'}, 'data': <HDF5 dataset "id": shape (257,), type "<i4">}}, 'links': {}}, "Could not construct FrequencyBandsTable object due to: column must have the same number of rows as 'id'")
