@@ -38,3 +38,21 @@ Traceback (most recent call last):
   File "C:\Users\theac\anaconda3\envs\name-dandi_date-11+4+2025_py-3+11_env\Lib\site-packages\dandi\dandiapi.py", line 892, in _get_data
     raise NotFoundError(f"No such Dandiset: {self.identifier}")
 dandi.exceptions.NotFoundError: No such Dandiset: 000948
+Error retrieving information about file at path sub-441666/sub-441666_ses-20190517T150543_behavior+ecephys+ogen.nwb in dandiset ID 000363 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-441666/sub-441666_ses-20190517T150543_behavior+ecephys+ogen.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.11/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.11/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-441666/sub-441666_ses-20190517T150543_behavior+ecephys+ogen.nwb'
