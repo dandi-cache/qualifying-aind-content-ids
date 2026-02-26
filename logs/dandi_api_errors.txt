@@ -6250,3 +6250,837 @@ Traceback (most recent call last):
   File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
     raise NotFoundError(f"No asset at path {path!r}")
 dandi.exceptions.NotFoundError: No asset at path 'sub-440957/sub-440957_ses-20190214T144611_behavior+ecephys+ogen.nwb'
+Error retrieving information about file at path sub-Gaia/sub-Gaia_ses-pre-MPTP-G-140902-1_ecephys.nwb in dandiset ID 000948 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No such Dandiset: 000948
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 889, in _get_data
+    self.client.get(f"/dandisets/{self.identifier}/")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 313, in get
+    return self.request("GET", path, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 287, in request
+    raise HTTP404Error(msg, response=result)
+dandi.exceptions.HTTP404Error: Error 404 while sending GET request to https://api.dandiarchive.org/api/dandisets/000948/: {"detail":"Not found."}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1306, in <genexpr>
+    a for a in self.get_assets_with_path_prefix(path) if a.path == path
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1258, in get_assets_with_path_prefix
+    f"{self.version_api_path}assets/",
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 979, in version_api_path
+    return f"/dandisets/{self.identifier}/versions/{self.version_id}/"
+                                                    ^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 899, in version_id
+    self._version_id = self.version.identifier
+                       ^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 907, in version
+    self._get_data()
+    ~~~~~~~~~~~~~~^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
+    raise NotFoundError(f"No such Dandiset: {self.identifier}")
+dandi.exceptions.NotFoundError: No such Dandiset: 000948
+Error retrieving information about file at path sub-Gaia/sub-Gaia_ses-post-MPTP-G-161123-1_ecephys.nwb in dandiset ID 000948 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No such Dandiset: 000948
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 889, in _get_data
+    self.client.get(f"/dandisets/{self.identifier}/")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 313, in get
+    return self.request("GET", path, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 287, in request
+    raise HTTP404Error(msg, response=result)
+dandi.exceptions.HTTP404Error: Error 404 while sending GET request to https://api.dandiarchive.org/api/dandisets/000948/: {"detail":"Not found."}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1306, in <genexpr>
+    a for a in self.get_assets_with_path_prefix(path) if a.path == path
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1258, in get_assets_with_path_prefix
+    f"{self.version_api_path}assets/",
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 979, in version_api_path
+    return f"/dandisets/{self.identifier}/versions/{self.version_id}/"
+                                                    ^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 899, in version_id
+    self._version_id = self.version.identifier
+                       ^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 907, in version
+    self._get_data()
+    ~~~~~~~~~~~~~~^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
+    raise NotFoundError(f"No such Dandiset: {self.identifier}")
+dandi.exceptions.NotFoundError: No such Dandiset: 000948
+Error retrieving information about file at path sub-parkinson-simulated-lfp/sub-parkinson-simulated-lfp_ses-7341_ecephys.nwb in dandiset ID 001333 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-parkinson-simulated-lfp/sub-parkinson-simulated-lfp_ses-7341_ecephys.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-parkinson-simulated-lfp/sub-parkinson-simulated-lfp_ses-7341_ecephys.nwb'
+Error retrieving information about file at path sub-Isis/sub-Isis_ses-pre-MPTP-I-160627-3_ecephys.nwb in dandiset ID 000948 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No such Dandiset: 000948
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 889, in _get_data
+    self.client.get(f"/dandisets/{self.identifier}/")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 313, in get
+    return self.request("GET", path, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 287, in request
+    raise HTTP404Error(msg, response=result)
+dandi.exceptions.HTTP404Error: Error 404 while sending GET request to https://api.dandiarchive.org/api/dandisets/000948/: {"detail":"Not found."}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1306, in <genexpr>
+    a for a in self.get_assets_with_path_prefix(path) if a.path == path
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1258, in get_assets_with_path_prefix
+    f"{self.version_api_path}assets/",
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 979, in version_api_path
+    return f"/dandisets/{self.identifier}/versions/{self.version_id}/"
+                                                    ^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 899, in version_id
+    self._version_id = self.version.identifier
+                       ^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 907, in version
+    self._get_data()
+    ~~~~~~~~~~~~~~^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
+    raise NotFoundError(f"No such Dandiset: {self.identifier}")
+dandi.exceptions.NotFoundError: No such Dandiset: 000948
+Error retrieving information about file at path sub-parkinson-simulated-lfp/sub-parkinson-simulated-lfp_ses-5906_ecephys.nwb in dandiset ID 001333 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-parkinson-simulated-lfp/sub-parkinson-simulated-lfp_ses-5906_ecephys.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-parkinson-simulated-lfp/sub-parkinson-simulated-lfp_ses-5906_ecephys.nwb'
+Error retrieving information about file at path sub-MS12/sub-MS12_ses-Peter-MS12-170714-122034-concat_behavior+ecephys.nwb in dandiset ID 000059 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-MS12/sub-MS12_ses-Peter-MS12-170714-122034-concat_behavior+ecephys.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-MS12/sub-MS12_ses-Peter-MS12-170714-122034-concat_behavior+ecephys.nwb'
+Error retrieving information about file at path sub-healthy-simulated-lfp/sub-healthy-simulated-lfp_ses-4758_ecephys.nwb in dandiset ID 001333 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-healthy-simulated-lfp/sub-healthy-simulated-lfp_ses-4758_ecephys.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-healthy-simulated-lfp/sub-healthy-simulated-lfp_ses-4758_ecephys.nwb'
+Error retrieving information about file at path sub-001459PP070-P23-CA1-Cell4-blue-alone/sub-001459PP070-P23-CA1-Cell4-blue-alone_ses-20220510T001459_image.nwb in dandiset ID 001269 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No such Dandiset: 001269
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 889, in _get_data
+    self.client.get(f"/dandisets/{self.identifier}/")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 313, in get
+    return self.request("GET", path, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 287, in request
+    raise HTTP404Error(msg, response=result)
+dandi.exceptions.HTTP404Error: Error 404 while sending GET request to https://api.dandiarchive.org/api/dandisets/001269/: {"detail":"Not found."}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1306, in <genexpr>
+    a for a in self.get_assets_with_path_prefix(path) if a.path == path
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1258, in get_assets_with_path_prefix
+    f"{self.version_api_path}assets/",
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 979, in version_api_path
+    return f"/dandisets/{self.identifier}/versions/{self.version_id}/"
+                                                    ^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 899, in version_id
+    self._version_id = self.version.identifier
+                       ^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 907, in version
+    self._get_data()
+    ~~~~~~~~~~~~~~^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
+    raise NotFoundError(f"No such Dandiset: {self.identifier}")
+dandi.exceptions.NotFoundError: No such Dandiset: 001269
+Error retrieving information about file at path sub-455219/sub-455219_ses-20190805T152117_behavior+ecephys+ogen.nwb in dandiset ID 000363 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-455219/sub-455219_ses-20190805T152117_behavior+ecephys+ogen.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-455219/sub-455219_ses-20190805T152117_behavior+ecephys+ogen.nwb'
+Error retrieving information about file at path sub-08/sub-08_ses-20170113T121400_behavior+ecephys.nwb in dandiset ID 000574 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-08/sub-08_ses-20170113T121400_behavior+ecephys.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-08/sub-08_ses-20170113T121400_behavior+ecephys.nwb'
+Error retrieving information about file at path sub-Gaia/sub-Gaia_ses-pre-MPTP-G-140512-5_ecephys.nwb in dandiset ID 000948 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No such Dandiset: 000948
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 889, in _get_data
+    self.client.get(f"/dandisets/{self.identifier}/")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 313, in get
+    return self.request("GET", path, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 287, in request
+    raise HTTP404Error(msg, response=result)
+dandi.exceptions.HTTP404Error: Error 404 while sending GET request to https://api.dandiarchive.org/api/dandisets/000948/: {"detail":"Not found."}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1306, in <genexpr>
+    a for a in self.get_assets_with_path_prefix(path) if a.path == path
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1258, in get_assets_with_path_prefix
+    f"{self.version_api_path}assets/",
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 979, in version_api_path
+    return f"/dandisets/{self.identifier}/versions/{self.version_id}/"
+                                                    ^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 899, in version_id
+    self._version_id = self.version.identifier
+                       ^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 907, in version
+    self._get_data()
+    ~~~~~~~~~~~~~~^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
+    raise NotFoundError(f"No such Dandiset: {self.identifier}")
+dandi.exceptions.NotFoundError: No such Dandiset: 000948
+Error retrieving information about file at path sub-parkinson-simulated-lfp/sub-parkinson-simulated-lfp_ses-8181_ecephys.nwb in dandiset ID 001333 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-parkinson-simulated-lfp/sub-parkinson-simulated-lfp_ses-8181_ecephys.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-parkinson-simulated-lfp/sub-parkinson-simulated-lfp_ses-8181_ecephys.nwb'
+Error retrieving information about file at path sub-192/sub-192_ses-20201012.nwb in dandiset ID 000561 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No such Dandiset: 000561
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 889, in _get_data
+    self.client.get(f"/dandisets/{self.identifier}/")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 313, in get
+    return self.request("GET", path, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 287, in request
+    raise HTTP404Error(msg, response=result)
+dandi.exceptions.HTTP404Error: Error 404 while sending GET request to https://api.dandiarchive.org/api/dandisets/000561/: {"detail":"Not found."}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1306, in <genexpr>
+    a for a in self.get_assets_with_path_prefix(path) if a.path == path
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1258, in get_assets_with_path_prefix
+    f"{self.version_api_path}assets/",
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 979, in version_api_path
+    return f"/dandisets/{self.identifier}/versions/{self.version_id}/"
+                                                    ^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 899, in version_id
+    self._version_id = self.version.identifier
+                       ^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 907, in version
+    self._get_data()
+    ~~~~~~~~~~~~~~^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
+    raise NotFoundError(f"No such Dandiset: {self.identifier}")
+dandi.exceptions.NotFoundError: No such Dandiset: 000561
+Error retrieving information about file at path sub-Gaia/sub-Gaia_ses-pre-MPTP-G-140514-8_ecephys.nwb in dandiset ID 000948 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No such Dandiset: 000948
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 889, in _get_data
+    self.client.get(f"/dandisets/{self.identifier}/")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 313, in get
+    return self.request("GET", path, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 287, in request
+    raise HTTP404Error(msg, response=result)
+dandi.exceptions.HTTP404Error: Error 404 while sending GET request to https://api.dandiarchive.org/api/dandisets/000948/: {"detail":"Not found."}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1306, in <genexpr>
+    a for a in self.get_assets_with_path_prefix(path) if a.path == path
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1258, in get_assets_with_path_prefix
+    f"{self.version_api_path}assets/",
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 979, in version_api_path
+    return f"/dandisets/{self.identifier}/versions/{self.version_id}/"
+                                                    ^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 899, in version_id
+    self._version_id = self.version.identifier
+                       ^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 907, in version
+    self._get_data()
+    ~~~~~~~~~~~~~~^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
+    raise NotFoundError(f"No such Dandiset: {self.identifier}")
+dandi.exceptions.NotFoundError: No such Dandiset: 000948
+Error retrieving information about file at path sub-parkinson-simulated-beta/sub-parkinson-simulated-beta_ses-8154_ecephys.nwb in dandiset ID 001333 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-parkinson-simulated-beta/sub-parkinson-simulated-beta_ses-8154_ecephys.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-parkinson-simulated-beta/sub-parkinson-simulated-beta_ses-8154_ecephys.nwb'
+Error retrieving information about file at path sub-SKKS091/sub-SKKS091_ses-20210518T175848_behavior+ophys.nwb in dandiset ID 000477 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No such Dandiset: 000477
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 889, in _get_data
+    self.client.get(f"/dandisets/{self.identifier}/")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 313, in get
+    return self.request("GET", path, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 287, in request
+    raise HTTP404Error(msg, response=result)
+dandi.exceptions.HTTP404Error: Error 404 while sending GET request to https://api.dandiarchive.org/api/dandisets/000477/: {"detail":"Not found."}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1306, in <genexpr>
+    a for a in self.get_assets_with_path_prefix(path) if a.path == path
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1258, in get_assets_with_path_prefix
+    f"{self.version_api_path}assets/",
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 979, in version_api_path
+    return f"/dandisets/{self.identifier}/versions/{self.version_id}/"
+                                                    ^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 899, in version_id
+    self._version_id = self.version.identifier
+                       ^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 907, in version
+    self._get_data()
+    ~~~~~~~~~~~~~~^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
+    raise NotFoundError(f"No such Dandiset: {self.identifier}")
+dandi.exceptions.NotFoundError: No such Dandiset: 000477
+Error retrieving information about file at path sub-parkinson-simulated-lfp/sub-parkinson-simulated-lfp_ses-3293_ecephys.nwb in dandiset ID 001333 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-parkinson-simulated-lfp/sub-parkinson-simulated-lfp_ses-3293_ecephys.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-parkinson-simulated-lfp/sub-parkinson-simulated-lfp_ses-3293_ecephys.nwb'
+Error retrieving information about file at path sub-03/sub-03_ses-20150304T165900_behavior+ecephys.nwb in dandiset ID 000574 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-03/sub-03_ses-20150304T165900_behavior+ecephys.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-03/sub-03_ses-20150304T165900_behavior+ecephys.nwb'
+Error retrieving information about file at path sub-Isis/sub-Isis_ses-post-MPTP-I-190130-3_ecephys.nwb in dandiset ID 000948 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No such Dandiset: 000948
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 889, in _get_data
+    self.client.get(f"/dandisets/{self.identifier}/")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 313, in get
+    return self.request("GET", path, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 287, in request
+    raise HTTP404Error(msg, response=result)
+dandi.exceptions.HTTP404Error: Error 404 while sending GET request to https://api.dandiarchive.org/api/dandisets/000948/: {"detail":"Not found."}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1306, in <genexpr>
+    a for a in self.get_assets_with_path_prefix(path) if a.path == path
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1258, in get_assets_with_path_prefix
+    f"{self.version_api_path}assets/",
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 979, in version_api_path
+    return f"/dandisets/{self.identifier}/versions/{self.version_id}/"
+                                                    ^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 899, in version_id
+    self._version_id = self.version.identifier
+                       ^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 907, in version
+    self._get_data()
+    ~~~~~~~~~~~~~~^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
+    raise NotFoundError(f"No such Dandiset: {self.identifier}")
+dandi.exceptions.NotFoundError: No such Dandiset: 000948
+Error retrieving information about file at path sub-healthy-simulated-lfp/sub-healthy-simulated-lfp_ses-2081_ecephys.nwb in dandiset ID 001333 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-healthy-simulated-lfp/sub-healthy-simulated-lfp_ses-2081_ecephys.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-healthy-simulated-lfp/sub-healthy-simulated-lfp_ses-2081_ecephys.nwb'
+Error retrieving information about file at path sub-714612/sub-714612_ses-1325995398.nwb in dandiset ID 000563 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-714612/sub-714612_ses-1325995398.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-714612/sub-714612_ses-1325995398.nwb'
+Error retrieving information about file at path sub-442571/sub-442571_ses-20190227T134351_behavior+ecephys+ogen.nwb in dandiset ID 000363 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-442571/sub-442571_ses-20190227T134351_behavior+ecephys+ogen.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-442571/sub-442571_ses-20190227T134351_behavior+ecephys+ogen.nwb'
+Error retrieving information about file at path sub-healthy-simulated-beta/sub-healthy-simulated-beta_ses-6256_ecephys.nwb in dandiset ID 001333 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-healthy-simulated-beta/sub-healthy-simulated-beta_ses-6256_ecephys.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-healthy-simulated-beta/sub-healthy-simulated-beta_ses-6256_ecephys.nwb'
+Error retrieving information about file at path sub-440959/sub-440959_ses-20190223T173853_behavior+ecephys+ogen.nwb in dandiset ID 000363 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-440959/sub-440959_ses-20190223T173853_behavior+ecephys+ogen.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-440959/sub-440959_ses-20190223T173853_behavior+ecephys+ogen.nwb'
+Error retrieving information about file at path sub-EPCNHP2/sub-EPCNHP2_ses-2021-02-03-003_ecephys.nwb in dandiset ID 001054 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-EPCNHP2/sub-EPCNHP2_ses-2021-02-03-003_ecephys.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-EPCNHP2/sub-EPCNHP2_ses-2021-02-03-003_ecephys.nwb'
+Error retrieving information about file at path sub-EPCNHP2/sub-EPCNHP2_ses-2021-02-17-008_ecephys.nwb in dandiset ID 001054 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-EPCNHP2/sub-EPCNHP2_ses-2021-02-17-008_ecephys.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-EPCNHP2/sub-EPCNHP2_ses-2021-02-17-008_ecephys.nwb'
+Error retrieving information about file at path sub-healthy-simulated-lfp/sub-healthy-simulated-lfp_ses-1433_ecephys.nwb in dandiset ID 001333 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-healthy-simulated-lfp/sub-healthy-simulated-lfp_ses-1433_ecephys.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-healthy-simulated-lfp/sub-healthy-simulated-lfp_ses-1433_ecephys.nwb'
+Error retrieving information about file at path sub-Isis/sub-Isis_ses-post-MPTP-I-181022-2_ecephys.nwb in dandiset ID 000948 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No such Dandiset: 000948
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 889, in _get_data
+    self.client.get(f"/dandisets/{self.identifier}/")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 313, in get
+    return self.request("GET", path, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 287, in request
+    raise HTTP404Error(msg, response=result)
+dandi.exceptions.HTTP404Error: Error 404 while sending GET request to https://api.dandiarchive.org/api/dandisets/000948/: {"detail":"Not found."}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1306, in <genexpr>
+    a for a in self.get_assets_with_path_prefix(path) if a.path == path
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1258, in get_assets_with_path_prefix
+    f"{self.version_api_path}assets/",
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 979, in version_api_path
+    return f"/dandisets/{self.identifier}/versions/{self.version_id}/"
+                                                    ^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 899, in version_id
+    self._version_id = self.version.identifier
+                       ^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 907, in version
+    self._get_data()
+    ~~~~~~~~~~~~~~^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
+    raise NotFoundError(f"No such Dandiset: {self.identifier}")
+dandi.exceptions.NotFoundError: No such Dandiset: 000948
+Error retrieving information about file at path sub-parkinson-simulated-lfp/sub-parkinson-simulated-lfp_ses-4029_ecephys.nwb in dandiset ID 001333 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-parkinson-simulated-lfp/sub-parkinson-simulated-lfp_ses-4029_ecephys.nwb'
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-parkinson-simulated-lfp/sub-parkinson-simulated-lfp_ses-4029_ecephys.nwb'
+Error retrieving information about file at path sub-Gaia/sub-Gaia_ses-pre-MPTP-G-140609-2_ecephys.nwb in dandiset ID 000948 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No such Dandiset: 000948
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 889, in _get_data
+    self.client.get(f"/dandisets/{self.identifier}/")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 313, in get
+    return self.request("GET", path, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 287, in request
+    raise HTTP404Error(msg, response=result)
+dandi.exceptions.HTTP404Error: Error 404 while sending GET request to https://api.dandiarchive.org/api/dandisets/000948/: {"detail":"Not found."}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1306, in <genexpr>
+    a for a in self.get_assets_with_path_prefix(path) if a.path == path
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1258, in get_assets_with_path_prefix
+    f"{self.version_api_path}assets/",
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 979, in version_api_path
+    return f"/dandisets/{self.identifier}/versions/{self.version_id}/"
+                                                    ^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 899, in version_id
+    self._version_id = self.version.identifier
+                       ^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 907, in version
+    self._get_data()
+    ~~~~~~~~~~~~~~^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
+    raise NotFoundError(f"No such Dandiset: {self.identifier}")
+dandi.exceptions.NotFoundError: No such Dandiset: 000948
+Error retrieving information about file at path sub-SKKS091/sub-SKKS091_ses-20210311T113531_behavior+ophys.nwb in dandiset ID 000477 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No such Dandiset: 000477
+
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 889, in _get_data
+    self.client.get(f"/dandisets/{self.identifier}/")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 313, in get
+    return self.request("GET", path, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 287, in request
+    raise HTTP404Error(msg, response=result)
+dandi.exceptions.HTTP404Error: Error 404 while sending GET request to https://api.dandiarchive.org/api/dandisets/000477/: {"detail":"Not found."}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 47, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1306, in <genexpr>
+    a for a in self.get_assets_with_path_prefix(path) if a.path == path
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 1258, in get_assets_with_path_prefix
+    f"{self.version_api_path}assets/",
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 979, in version_api_path
+    return f"/dandisets/{self.identifier}/versions/{self.version_id}/"
+                                                    ^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 899, in version_id
+    self._version_id = self.version.identifier
+                       ^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 907, in version
+    self._get_data()
+    ~~~~~~~~~~~~~~^^
+  File "/opt/hostedtoolcache/Python/3.13.12/x64/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
+    raise NotFoundError(f"No such Dandiset: {self.identifier}")
+dandi.exceptions.NotFoundError: No such Dandiset: 000477
