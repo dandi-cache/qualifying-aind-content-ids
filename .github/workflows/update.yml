@@ -11,7 +11,6 @@ concurrency:
 
 env:
   GITHUB_TOKEN: ${{ secrets._GITHUB_API_KEY }}
-  REPO_DIR: ${{ github.event.repository.name }}
 
 jobs:
   Update:
@@ -31,40 +30,47 @@ jobs:
             sleep 60
           fi
 
-      - name: Clone
-        run: git clone -b main https://x-access-token:${{ secrets._GITHUB_API_KEY }}@github.com/dandi-cache/$REPO_DIR.git
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets._GITHUB_API_KEY }}
+          submodules: true
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: 3.13
+          cache: pip
+
+      - name: Update submodule
+        run: git submodule update --remote submodules/content-id-to-nwb-files
 
       - name: Run update
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          pip install PyYaml requests remfile h5py zarr pynwb dandi spikeinterface
+          pip install -r requirements.txt
 
-          python $REPO_DIR/code/update.py
+          python code/update.py
 
       - name: Upload YAML
         run: |
-          git -C $REPO_DIR add .
-          git -C $REPO_DIR commit --message "update" || true  # || true in case of no changes
-          git -C $REPO_DIR push
+          git add .
+          git commit --message "update" || true  # || true in case of no changes
+          git push
 
       - name: Run minification
-        run: python $REPO_DIR/code/minify.py
+        run: python code/minify.py
 
       - name: Upload minification
         run: |
-          git -C $REPO_DIR push origin --delete min || true  # || true in case branch doesn't exist yet
+          git push origin --delete min || true  # || true in case branch doesn't exist yet
 
-          git -C $REPO_DIR checkout -b min
-          git -C $REPO_DIR add .
-          git -C $REPO_DIR commit --message "update min" || true  # || true in case of no changes
-          git -C $REPO_DIR push --set-upstream origin min
+          git checkout -b min
+          git add .
+          git commit --message "update min" || true  # || true in case of no changes
+          git push --set-upstream origin min
 
   NotifyOnFailure:
     runs-on: ubuntu-latest

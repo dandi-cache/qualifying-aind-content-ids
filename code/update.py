@@ -9,14 +9,14 @@ import h5py
 import hdmf_zarr
 import pynwb
 import remfile
-import requests
 import yaml
 
 
 def _run(base_directory: pathlib.Path, limit: int | None) -> None:
-    url = "https://raw.githubusercontent.com/dandi-cache/content-id-to-nwb-files/refs/heads/min/derivatives/content_id_to_nwb_files.min.json.gz"
-    response = requests.get(url)
-    content_id_to_dandiset_paths = json.loads(gzip.decompress(data=response.content))
+    submodule_dir = base_directory / "submodules" / "content-id-to-nwb-files" / "derivatives"
+    submodule_file_path = submodule_dir / "content_id_to_nwb_files.min.json.gz"
+    with gzip.open(filename=submodule_file_path, mode="rt", encoding="utf-8") as file_stream:
+        content_id_to_dandiset_paths = json.load(file_stream)
 
     dandi_api_errors_log_file_path = base_directory / "logs" / "dandi_api_errors.txt"
     file_open_errors_log_file_path = base_directory / "logs" / "file_open_errors.txt"
