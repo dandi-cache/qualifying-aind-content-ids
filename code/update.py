@@ -1,6 +1,4 @@
-import gzip
 import itertools
-import json
 import pathlib
 import traceback
 
@@ -14,9 +12,9 @@ import yaml
 
 def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     submodule_dir = base_directory / "submodules" / "content-id-to-nwb-files" / "derivatives"
-    submodule_file_path = submodule_dir / "content_id_to_nwb_files.min.json.gz"
-    with gzip.open(filename=submodule_file_path, mode="rt", encoding="utf-8") as file_stream:
-        content_id_to_dandiset_paths = json.load(file_stream)
+    submodule_file_path = submodule_dir / "content_id_to_nwb_files.yaml"
+    with submodule_file_path.open(mode="r") as file_stream:
+        content_id_to_dandiset_paths = yaml.safe_load(file_stream)
 
     dandi_api_errors_log_file_path = base_directory / "logs" / "dandi_api_errors.txt"
     file_open_errors_log_file_path = base_directory / "logs" / "file_open_errors.txt"
