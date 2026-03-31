@@ -46,14 +46,14 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            submodules/content-id-to-nwb-files
-            .git/modules/submodules
-          key: submodule-content-id-to-nwb-files-${{ github.run_id }}
+            sourcedata/content-id-to-nwb-files
+            .git/modules/sourcedata
+          key: sourcedata-content-id-to-nwb-files-${{ github.run_id }}
           restore-keys: |
-            submodule-content-id-to-nwb-files-
+            sourcedata-content-id-to-nwb-files-
 
       - name: Update submodule
-        run: git submodule update --init --remote submodules/content-id-to-nwb-files
+        run: git submodule update --init --remote sourcedata/content-id-to-nwb-files
 
       - name: Run update
         run: |
@@ -96,4 +96,4 @@ jobs:
           subject: "CI Failure: DANDI Cache: Qualifying AIND Content IDs"
           to: cody.c.baker.phd@gmail.com  # Add more with comma separation (no spaces)
           from: dandi-cache
-          body: "Please check the latest run of the DANDI Cache update: https://github.com/dandi-cache/qualifying-aind-content-ids/actions/workflows/update.yml"
+          body: "Please check the latest run of the DANDI Cache update: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
