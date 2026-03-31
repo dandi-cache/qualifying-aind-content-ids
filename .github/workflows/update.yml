@@ -50,8 +50,7 @@ jobs:
             sourcedata/content-id-to-nwb-files
             .git/modules/sourcedata
           key: sourcedata-content-id-to-nwb-files-${{ github.run_id }}
-          restore-keys: |
-            sourcedata-content-id-to-nwb-files-
+          restore-keys: sourcedata-content-id-to-nwb-files-
 
       - name: Update submodule
         run: git submodule update --init --remote sourcedata/content-id-to-nwb-files
