@@ -5,6 +5,7 @@ import traceback
 import dandi.dandiapi
 import h5py
 import hdmf_zarr
+import nwbinspector
 import pynwb
 import remfile
 import yaml
@@ -18,6 +19,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
 
     dandi_api_errors_log_file_path = base_directory / "logs" / "dandi_api_errors.txt"
     file_open_errors_log_file_path = base_directory / "logs" / "file_open_errors.txt"
+    nwb_inspector_errors_log_file_path = base_directory / "logs" / "nwb_inspector_errors.txt"
     error_ids_file_path = base_directory / "derivatives" / "error_ids.yaml"
     with error_ids_file_path.open(mode="r") as file_stream:
         yaml_content = yaml.safe_load(file_stream)
@@ -36,6 +38,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
         qualifying_aind_content_ids = set(yaml_content) if yaml_content is not None else set()
 
     client = dandi.dandiapi.DandiAPIClient()  # Run tokenless to ensure only public dandisets are accessed
+    dandi_config = nwbinspector.load_config("dandi")
     for content_id in itertools.islice(content_ids_to_process, limit):
         dandiset_id, dandiset_paths = next(iter(content_id_to_dandiset_paths[content_id].items()))
         first_path = dandiset_paths[0]  # Only test the first element and trust the rest
@@ -75,6 +78,26 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
                     f"{type(exception)}:{str(exception)}\n\n"
                     f"{traceback.format_exc()}"
                 )
+                file_stream.write(message)
+
+            error_ids.add(content_id)
+            continue
+
+        inspector_messages = list(
+            nwbinspector.inspect_nwbfile_object(
+                nwbfile_object=nwbfile,
+                config=dandi_config,
+                importance_threshold=nwbinspector.Importance.CRITICAL,
+            )
+        )
+        if inspector_messages:
+            with nwb_inspector_errors_log_file_path.open(mode="a") as file_stream:
+                message = (
+                    f"NWB Inspector found CRITICAL issues in file at path {first_path} "
+                    f"in dandiset ID {dandiset_id} with `{content_id=}`!\n\n"
+                )
+                for inspector_message in inspector_messages:
+                    message += f"{inspector_message}\n\n"
                 file_stream.write(message)
 
             error_ids.add(content_id)
