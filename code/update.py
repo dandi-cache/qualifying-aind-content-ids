@@ -93,7 +93,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
         )
         if inspector_messages:
             nwb_inspector_errors_log_file_path = nwb_inspector_errors_log_dir / f"{content_id}.txt"
-            with nwb_inspector_errors_log_file_path.open(mode="a") as file_stream:
+            with nwb_inspector_errors_log_file_path.open(mode="w") as file_stream:
                 message = (
                     f"NWB Inspector found CRITICAL issues in file at path {first_path} "
                     f"in dandiset ID {dandiset_id} with `{content_id=}`!\n\n"
