@@ -19,7 +19,8 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
 
     dandi_api_errors_log_file_path = base_directory / "logs" / "dandi_api_errors.txt"
     file_open_errors_log_file_path = base_directory / "logs" / "file_open_errors.txt"
-    nwb_inspector_errors_log_file_path = base_directory / "logs" / "nwb_inspector_errors.txt"
+    nwb_inspector_errors_log_dir = base_directory / "logs" / "nwb_inspector_errors"
+    nwb_inspector_errors_log_dir.mkdir(exist_ok=True)
     error_ids_file_path = base_directory / "derivatives" / "error_ids.yaml"
     with error_ids_file_path.open(mode="r") as file_stream:
         yaml_content = yaml.safe_load(file_stream)
@@ -91,7 +92,8 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             )
         )
         if inspector_messages:
-            with nwb_inspector_errors_log_file_path.open(mode="a") as file_stream:
+            nwb_inspector_errors_log_file_path = nwb_inspector_errors_log_dir / f"{content_id}.txt"
+            with nwb_inspector_errors_log_file_path.open(mode="w") as file_stream:
                 message = (
                     f"NWB Inspector found CRITICAL issues in file at path {first_path} "
                     f"in dandiset ID {dandiset_id} with `{content_id=}`!\n\n"
