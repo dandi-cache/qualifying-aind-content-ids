@@ -1,0 +1,46 @@
+NWB Inspector found CRITICAL issues in file at path sub-SLR099/sub-SLR099_ses-20190429_obj-2d1p55_behavior+image.nwb in dandiset ID 000540 with `content_id='369bcf39-3067-468f-b804-a84dca38bdb3'`!
+
+InspectorMessage(
+    message="The external file 'sub-SLR099_ses-20190429_obj-2d1p55_behavior+image/325e6fef-bc2f-4be6-a709-d488f7dbadc4_external_file_0.avi' does not exist. Please confirm the relative location to the NWBFile.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_image_series_external_file_valid',
+    object_type='ImageSeries',
+    object_name='ImageSeries',
+    location='/acquisition/ImageSeries',
+    file_path=None
+)
+
+InspectorMessage(
+    message="Subject weight '358' does not follow the expected form '[numeric] [unit]'. For example, '2.3 kg'. Without a unit, the weight is ambiguous. Valid units are: 'kg', 'g', 'mg', 'ug', 'μg', 'ng', 'pg'.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_weight',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='processing has a sampling rate value of 0.0Hz but the series has more than one frame.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_rate_is_not_zero',
+    object_type='TimeSeries',
+    object_name='processing',
+    location='/processing/signal_percentiles/processing/processing',
+    file_path=None
+)
+
+InspectorMessage(
+    message='analysis has a sampling rate value of 0.0Hz but the series has more than one frame.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_rate_is_not_zero',
+    object_type='TimeSeries',
+    object_name='analysis',
+    location='/processing/behavioral_booleans/analysis/analysis',
+    file_path=None
+)
+
