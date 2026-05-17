@@ -1,0 +1,35 @@
+NWB Inspector found CRITICAL issues in file at path sub-Mouse 2060/sub-Mouse 2060_ses-Session 05_obj-ily2xs.nwb in dandiset ID 000217 with `content_id='35af17fb-03fa-4306-a32e-9f8e1b13f57a'`!
+
+InspectorMessage(
+    message='Subject is missing age and date_of_birth. Please specify at least one of these fields.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_age',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='Subject.sex is missing.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_sex',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message="Subject species 'Mouse' should either be in Latin binomial form (e.g., 'Mus musculus' and 'Homo sapiens') or be a NCBI taxonomy link (e.g., 'http://purl.obolibrary.org/obo/NCBITaxon_280675').",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_species_form',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
