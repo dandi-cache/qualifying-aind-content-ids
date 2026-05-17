@@ -1,0 +1,24 @@
+NWB Inspector found CRITICAL issues in file at path sub-Rat8/sub-Rat8_ses-20221220T120000_behavior.nwb in dandiset ID 000624 with `content_id='d3366294-95dc-4bf2-958b-335b4e8f1452'`!
+
+InspectorMessage(
+    message="Subject weight '' does not follow the expected form '[numeric] [unit]'. For example, '2.3 kg'. Without a unit, the weight is ambiguous. Valid units are: 'kg', 'g', 'mg', 'ug', 'μg', 'ng', 'pg'.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_weight',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message="TimeIntervals table 'trials' has a duration of 107426323.00 seconds (3.40 years), which exceeds the threshold of 31557600.00 seconds (1.00 years). Please verify that this is correct.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_time_intervals_duration',
+    object_type='TimeIntervals',
+    object_name='trials',
+    location=None,
+    file_path=None
+)
+
