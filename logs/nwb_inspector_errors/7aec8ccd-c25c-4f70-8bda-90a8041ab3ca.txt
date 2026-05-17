@@ -1,0 +1,35 @@
+NWB Inspector found CRITICAL issues in file at path sub-18a54f60-534b-4ed5-8bda-b434079b8ab8/sub-18a54f60-534b-4ed5-8bda-b434079b8ab8_ses-616e7cfa-ba4d-4fbf-9400-dc0640f8238f_behavior+image.nwb in dandiset ID 000045 with `content_id='7aec8ccd-c25c-4f70-8bda-90a8041ab3ca'`!
+
+InspectorMessage(
+    message="The external file 'http://ibl.flatironinstitute.org/cortexlab/Subjects/KS014/2019-08-19/002/raw_video_data/_iblrig_leftCamera.raw.31ff1f12-75ee-4ab5-8d10-a4ff616c551d.mp4' does not exist. Please confirm the relative location to the NWBFile.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_image_series_external_file_valid',
+    object_type='ImageSeries',
+    object_name='camera_raw',
+    location='/acquisition/camera_raw',
+    file_path=None
+)
+
+InspectorMessage(
+    message="Subject weight '28.3' does not follow the expected form '[numeric] [unit]'. For example, '2.3 kg'. Without a unit, the weight is ambiguous. Valid units are: 'kg', 'g', 'mg', 'ug', 'μg', 'ng', 'pg'.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_weight',
+    object_type='IblSubject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='Subject species is missing.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_species_exists',
+    object_type='IblSubject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+

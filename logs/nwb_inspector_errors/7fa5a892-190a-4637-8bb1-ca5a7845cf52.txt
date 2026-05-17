@@ -1,0 +1,24 @@
+NWB Inspector found CRITICAL issues in file at path sub-HK230904/sub-HK230904_ses-clicks1_ecephys+image.nwb in dandiset ID 001419 with `content_id='7fa5a892-190a-4637-8bb1-ca5a7845cf52'`!
+
+InspectorMessage(
+    message='Spike times appear to be in samples rather than seconds. All sampled spike times are integer-valued. Spike times should be in seconds (divide by the sampling rate to convert). If your spike time resolution is truly 1 second or lower, set Units(resolution=1.0) to suppress this check.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_spike_times_not_in_samples',
+    object_type='Units',
+    object_name='units',
+    location=None,
+    file_path=None
+)
+
+InspectorMessage(
+    message='Unit 0 contains equal consecutive spike times. This violates the neural refractory period for single-unit data. If your recording resolution does not allow distinguishing these spikes, set the `resolution` field on the Units table to suppress this check.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_ascending_spike_times',
+    object_type='Units',
+    object_name='units',
+    location=None,
+    file_path=None
+)
+
