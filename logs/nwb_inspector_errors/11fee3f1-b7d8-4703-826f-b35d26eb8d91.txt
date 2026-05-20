@@ -1,0 +1,68 @@
+NWB Inspector found CRITICAL issues in file at path sub-389014/sub-389014_ses-20180710T153808_behavior+image+ophys.nwb in dandiset ID 000036 with `content_id='11fee3f1-b7d8-4703-826f-b35d26eb8d91'`!
+
+InspectorMessage(
+    message='Subject is missing age and date_of_birth. Please specify at least one of these fields.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_age',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='Subject.sex is missing.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_sex',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='Subject species is missing.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_species_exists',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='The second dimension of data does not match the length of rois, but instead the first does. Data is oriented incorrectly and should be transposed.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_roi_response_series_dims',
+    object_type='RoiResponseSeries',
+    object_name='imaging_plane_1',
+    location='/processing/ophys/DfOverF/imaging_plane_1',
+    file_path=None
+)
+
+InspectorMessage(
+    message='The length of the first dimension of data (25) does not match the length of timestamps (127177).',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_timestamps_match_first_dimension',
+    object_type='RoiResponseSeries',
+    object_name='imaging_plane_1',
+    location='/processing/ophys/DfOverF/imaging_plane_1',
+    file_path=None
+)
+
+InspectorMessage(
+    message='The length of the first dimension of data (252239) does not match the length of timestamps (252238).',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_timestamps_match_first_dimension',
+    object_type='TimeSeries',
+    object_name='running_velocity',
+    location='/processing/behavior/BehavioralTimeSeries/running_velocity',
+    file_path=None
+)
+
