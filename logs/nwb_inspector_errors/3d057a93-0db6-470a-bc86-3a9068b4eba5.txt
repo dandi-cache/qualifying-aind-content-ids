@@ -1,0 +1,24 @@
+NWB Inspector found CRITICAL issues in file at path sub-60fe80b7-7506-4885-8c36-e8622025780c/sub-60fe80b7-7506-4885-8c36-e8622025780c_ses-df52846f-ebe6-48de-9fc6-1ba18b7d4a4c_behavior+image.nwb in dandiset ID 000045 with `content_id='3d057a93-0db6-470a-bc86-3a9068b4eba5'`!
+
+InspectorMessage(
+    message="The external file 'http://ibl.flatironinstitute.org/zadorlab/Subjects/CSH_ZAD_001/2019-08-26/003/raw_video_data/_iblrig_leftCamera.raw.f9de1b71-d76d-4118-a840-40587bcf496f.mp4' does not exist. Please confirm the relative location to the NWBFile.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_image_series_external_file_valid',
+    object_type='ImageSeries',
+    object_name='camera_raw',
+    location='/acquisition/camera_raw',
+    file_path=None
+)
+
+InspectorMessage(
+    message="Subject weight '22.37' does not follow the expected form '[numeric] [unit]'. For example, '2.3 kg'. Without a unit, the weight is ambiguous. Valid units are: 'kg', 'g', 'mg', 'ug', 'μg', 'ng', 'pg'.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_weight',
+    object_type='IblSubject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
