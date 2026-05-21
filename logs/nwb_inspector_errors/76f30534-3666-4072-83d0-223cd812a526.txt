@@ -1,0 +1,24 @@
+NWB Inspector found CRITICAL issues in file at path sub-BH655/sub-BH655_ses-20250303T200400_ecephys.nwb in dandiset ID 001199 with `content_id='76f30534-3666-4072-83d0-223cd812a526'`!
+
+InspectorMessage(
+    message='Unit 1 contains descending spike times, which is always a data error. Spike times should be sorted in strictly ascending order.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_ascending_spike_times',
+    object_type='Units',
+    object_name='units',
+    location=None,
+    file_path=None
+)
+
+InspectorMessage(
+    message='Traceback (most recent call last):\n  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/nwbinspector/_nwb_inspection.py", line 459, in run_checks\n    output = check_function(nwbfile_object)\n  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/nwbinspector/_registration.py", line 75, in auto_parse_some_output\n    output = check_function(*args, **kwargs)\n  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/nwbinspector/checks/_ecephys.py", line 404, in check_units_table_duration\n    boundary_spike_times = spike_times_data[all_indices]\n                           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\n  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper\n  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper\n  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/h5py/_hl/dataset.py", line 872, in __getitem__\n    return self._fast_reader.read(args)\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^\n  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper\n  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper\n  File "h5py/_selector.pyx", line 378, in h5py._selector.Reader.read\n  File "h5py/_selector.pyx", line 213, in h5py._selector.Selector.apply_args\nIndexError: Fancy indexing out of range for (0-41553)\n',
+    importance=<Importance.ERROR: 4>,
+    severity=<Severity.LOW: 1>,
+    check_function_name="During evaluation of 'check_units_table_duration' - <class 'IndexError'>: Fancy indexing out of range for (0-41553)",
+    object_type=None,
+    object_name=None,
+    location=None,
+    file_path='unknown'
+)
+
