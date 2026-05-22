@@ -1,0 +1,24 @@
+NWB Inspector found CRITICAL issues in file at path sub-Wallie/sub-Wallie_ses-Wallie-20220922_obj-1nu8hpa.nwb in dandiset ID 001634 with `content_id='db24dca8-ad9e-443a-b7e6-698a7371ce61'`!
+
+InspectorMessage(
+    message='This Units table does not have a spike_times column. A Units table without spike times is likely an error or misuse of the neurodata type.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_units_table_has_spikes',
+    object_type='Units',
+    object_name='units',
+    location=None,
+    file_path=None
+)
+
+InspectorMessage(
+    message="Subject weight 'Unknown' does not follow the expected form '[numeric] [unit]'. For example, '2.3 kg'. Without a unit, the weight is ambiguous. Valid units are: 'kg', 'g', 'mg', 'ug', 'μg', 'ng', 'pg'.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_weight',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
