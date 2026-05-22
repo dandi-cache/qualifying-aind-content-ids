@@ -81823,3 +81823,239 @@ Traceback (most recent call last):
   File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
     raise NotFoundError(f"No asset at path {path!r}")
 dandi.exceptions.NotFoundError: No asset at path 'sub-A1824/sub-A1824_behavior+ecephys+ogen.nwb'
+Error retrieving information about file at path sub-FXM105/sub-FXM105_ses-43-rc50_behavior.nwb in dandiset ID 001845 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-FXM105/sub-FXM105_ses-43-rc50_behavior.nwb'
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 49, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-FXM105/sub-FXM105_ses-43-rc50_behavior.nwb'
+Error retrieving information about file at path sub-NYU-12/sub-NYU-12_ses-4364a246-f8d7-4ce7-ba23-a098104b96e4_behavior.nwb in dandiset ID 001533 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No such Dandiset: 001533
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 889, in _get_data
+    self.client.get(f"/dandisets/{self.identifier}/")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 313, in get
+    return self.request("GET", path, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 287, in request
+    raise HTTP404Error(msg, response=result)
+dandi.exceptions.HTTP404Error: Error 404 while sending GET request to https://api.dandiarchive.org/api/dandisets/001533/: {"detail":"Not found."}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 49, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1306, in <genexpr>
+    a for a in self.get_assets_with_path_prefix(path) if a.path == path
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1258, in get_assets_with_path_prefix
+    f"{self.version_api_path}assets/",
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 979, in version_api_path
+    return f"/dandisets/{self.identifier}/versions/{self.version_id}/"
+                                                    ^^^^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 899, in version_id
+    self._version_id = self.version.identifier
+                       ^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 907, in version
+    self._get_data()
+    ~~~~~~~~~~~~~~^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
+    raise NotFoundError(f"No such Dandiset: {self.identifier}")
+dandi.exceptions.NotFoundError: No such Dandiset: 001533
+Error retrieving information about file at path sub-CSHL059/sub-CSHL059_ses-d16a9a8d-5f42-4b49-ba58-1746f807fcc1_behavior.nwb in dandiset ID 001533 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No such Dandiset: 001533
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 889, in _get_data
+    self.client.get(f"/dandisets/{self.identifier}/")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 313, in get
+    return self.request("GET", path, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 287, in request
+    raise HTTP404Error(msg, response=result)
+dandi.exceptions.HTTP404Error: Error 404 while sending GET request to https://api.dandiarchive.org/api/dandisets/001533/: {"detail":"Not found."}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 49, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1306, in <genexpr>
+    a for a in self.get_assets_with_path_prefix(path) if a.path == path
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1258, in get_assets_with_path_prefix
+    f"{self.version_api_path}assets/",
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 979, in version_api_path
+    return f"/dandisets/{self.identifier}/versions/{self.version_id}/"
+                                                    ^^^^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 899, in version_id
+    self._version_id = self.version.identifier
+                       ^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 907, in version
+    self._get_data()
+    ~~~~~~~~~~~~~~^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
+    raise NotFoundError(f"No such Dandiset: {self.identifier}")
+dandi.exceptions.NotFoundError: No such Dandiset: 001533
+Error retrieving information about file at path sub-KS016/sub-KS016_ses-6cf2a88a-515b-4f7f-89a2-7d53eab9b5f4_behavior.nwb in dandiset ID 001533 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No such Dandiset: 001533
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 889, in _get_data
+    self.client.get(f"/dandisets/{self.identifier}/")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 313, in get
+    return self.request("GET", path, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 287, in request
+    raise HTTP404Error(msg, response=result)
+dandi.exceptions.HTTP404Error: Error 404 while sending GET request to https://api.dandiarchive.org/api/dandisets/001533/: {"detail":"Not found."}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 49, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1306, in <genexpr>
+    a for a in self.get_assets_with_path_prefix(path) if a.path == path
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1258, in get_assets_with_path_prefix
+    f"{self.version_api_path}assets/",
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 979, in version_api_path
+    return f"/dandisets/{self.identifier}/versions/{self.version_id}/"
+                                                    ^^^^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 899, in version_id
+    self._version_id = self.version.identifier
+                       ^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 907, in version
+    self._get_data()
+    ~~~~~~~~~~~~~~^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
+    raise NotFoundError(f"No such Dandiset: {self.identifier}")
+dandi.exceptions.NotFoundError: No such Dandiset: 001533
+Error retrieving information about file at path sub-FXM107/sub-FXM107_ses-29-rc50_behavior.nwb in dandiset ID 001845 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-FXM107/sub-FXM107_ses-29-rc50_behavior.nwb'
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 49, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-FXM107/sub-FXM107_ses-29-rc50_behavior.nwb'
+Error retrieving information about file at path sub-FXM109/sub-FXM109_ses-07-rc50_behavior.nwb in dandiset ID 001845 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-FXM109/sub-FXM109_ses-07-rc50_behavior.nwb'
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 49, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-FXM109/sub-FXM109_ses-07-rc50_behavior.nwb'
+Error retrieving information about file at path sub-PL031/sub-PL031_ses-9fcbd1a0-77e6-4c41-9428-eeaee74becd5_behavior.nwb in dandiset ID 001533 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No such Dandiset: 001533
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 889, in _get_data
+    self.client.get(f"/dandisets/{self.identifier}/")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 313, in get
+    return self.request("GET", path, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 287, in request
+    raise HTTP404Error(msg, response=result)
+dandi.exceptions.HTTP404Error: Error 404 while sending GET request to https://api.dandiarchive.org/api/dandisets/001533/: {"detail":"Not found."}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 49, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1306, in <genexpr>
+    a for a in self.get_assets_with_path_prefix(path) if a.path == path
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1258, in get_assets_with_path_prefix
+    f"{self.version_api_path}assets/",
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 979, in version_api_path
+    return f"/dandisets/{self.identifier}/versions/{self.version_id}/"
+                                                    ^^^^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 899, in version_id
+    self._version_id = self.version.identifier
+                       ^^^^^^^^^^^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 907, in version
+    self._get_data()
+    ~~~~~~~~~~~~~~^^
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
+    raise NotFoundError(f"No such Dandiset: {self.identifier}")
+dandi.exceptions.NotFoundError: No such Dandiset: 001533
+Error retrieving information about file at path sub-A5506/sub-A5506_behavior+ecephys.nwb in dandiset ID 000939 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path 'sub-A5506/sub-A5506_behavior+ecephys.nwb'
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 49, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path 'sub-A5506/sub-A5506_behavior+ecephys.nwb'
