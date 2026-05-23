@@ -1,0 +1,35 @@
+NWB Inspector found CRITICAL issues in file at path sub-EE/sub-EE_ses-EE-087_ecephys.nwb in dandiset ID 000067 with `content_id='809c658d-6fa6-47e7-b71f-63a484fb1f92'`!
+
+InspectorMessage(
+    message="Subject age, '3-5 months', does not follow ISO 8601 duration format, e.g. 'P2Y' for 2 years or 'P23W' for 23 weeks. You may also specify a range using a '/' separator, e.g., 'P1D/P3D' for an age range somewhere from 1 to 3 days. If you cannot specify the upper bound of the range, you may leave the right side blank, e.g., 'P90Y/' means 90 years old or older.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_age',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message="Subject.sex should be one of: 'M' (male), 'F' (female), 'O' (other), or 'U' (unknown).",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_sex',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message="Subject species 'Rattus norvegicus domestica' should either be in Latin binomial form (e.g., 'Mus musculus' and 'Homo sapiens') or be a NCBI taxonomy link (e.g., 'http://purl.obolibrary.org/obo/NCBITaxon_280675').",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_species_form',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
