@@ -1,0 +1,24 @@
+NWB Inspector found CRITICAL issues in file at path sub-221b68e7-0014-46ae-b8af-308665d8b478/sub-221b68e7-0014-46ae-b8af-308665d8b478_ses-bba5872e-426a-4501-be15-73260880e681_behavior+image.nwb in dandiset ID 000045 with `content_id='50516ed9-f379-415d-8d32-1aa25dd21b4e'`!
+
+InspectorMessage(
+    message="The external file 'http://ibl.flatironinstitute.org/churchlandlab/Subjects/CSHL053/2019-12-05/001/raw_video_data/_iblrig_leftCamera.raw.c677e717-d34f-40eb-8655-ece5e513ae59.mp4' does not exist. Please confirm the relative location to the NWBFile.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_image_series_external_file_valid',
+    object_type='ImageSeries',
+    object_name='camera_raw',
+    location='/acquisition/camera_raw',
+    file_path=None
+)
+
+InspectorMessage(
+    message="Subject weight '20.69' does not follow the expected form '[numeric] [unit]'. For example, '2.3 kg'. Without a unit, the weight is ambiguous. Valid units are: 'kg', 'g', 'mg', 'ug', 'μg', 'ng', 'pg'.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_weight',
+    object_type='IblSubject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
