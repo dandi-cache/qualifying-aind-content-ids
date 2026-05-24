@@ -1,0 +1,68 @@
+NWB Inspector found CRITICAL issues in file at path sub-8675309/sub-8675309_ses-20211008T163543_ophys.nwb in dandiset ID 000144 with `content_id='a6fd5bda-fbd4-486d-826b-a4a7c611a522'`!
+
+InspectorMessage(
+    message='Subject is missing age and date_of_birth. Please specify at least one of these fields.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_age',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='Subject.sex is missing.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_sex',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='Subject species is missing.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_species_exists',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='The second dimension of data does not match the length of rois, but instead the first does. Data is oriented incorrectly and should be transposed.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_roi_response_series_dims',
+    object_type='RoiResponseSeries',
+    object_name='Neuropil',
+    location='/processing/ophys/Neuropil/Neuropil',
+    file_path=None
+)
+
+InspectorMessage(
+    message='The second dimension of data does not match the length of rois, but instead the first does. Data is oriented incorrectly and should be transposed.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_roi_response_series_dims',
+    object_type='RoiResponseSeries',
+    object_name='Fluorescence',
+    location='/processing/ophys/Fluorescence/Fluorescence',
+    file_path=None
+)
+
+InspectorMessage(
+    message='The second dimension of data does not match the length of rois, but instead the first does. Data is oriented incorrectly and should be transposed.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_roi_response_series_dims',
+    object_type='RoiResponseSeries',
+    object_name='Deconvolved',
+    location='/processing/ophys/Deconvolved/Deconvolved',
+    file_path=None
+)
+
