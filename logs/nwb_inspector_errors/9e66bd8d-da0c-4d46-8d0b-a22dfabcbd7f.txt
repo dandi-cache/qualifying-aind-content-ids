@@ -1,0 +1,46 @@
+NWB Inspector found CRITICAL issues in file at path sub-bc7dbe81-1c5d-41a3-afeb-82e61b6abf94/sub-bc7dbe81-1c5d-41a3-afeb-82e61b6abf94_ses-d6e0d594-efdd-4bcf-8246-88f8bdfae3fd_behavior+image.nwb in dandiset ID 000045 with `content_id='9e66bd8d-da0c-4d46-8d0b-a22dfabcbd7f'`!
+
+InspectorMessage(
+    message="The external file 'http://ibl.flatironinstitute.org/cortexlab/Subjects/KS018/2019-10-14/007/raw_video_data/_iblrig_leftCamera.raw.3e2ea48d-4165-4d1a-80da-8eb496cea4c3.mp4' does not exist. Please confirm the relative location to the NWBFile.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_image_series_external_file_valid',
+    object_type='ImageSeries',
+    object_name='camera_raw',
+    location='/acquisition/camera_raw',
+    file_path=None
+)
+
+InspectorMessage(
+    message="Subject weight '25.8' does not follow the expected form '[numeric] [unit]'. For example, '2.3 kg'. Without a unit, the weight is ambiguous. Valid units are: 'kg', 'g', 'mg', 'ug', 'μg', 'ng', 'pg'.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_weight',
+    object_type='IblSubject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='Subject species is missing.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_species_exists',
+    object_type='IblSubject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='The length of the first dimension of data (100836) does not match the length of timestamps (192576).',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_timestamps_match_first_dimension',
+    object_type='TimeSeries',
+    object_name='position',
+    location='/processing/behavior/BehavioralTimeSeries/position',
+    file_path=None
+)
+
