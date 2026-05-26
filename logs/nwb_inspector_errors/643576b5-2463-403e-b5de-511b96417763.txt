@@ -1,0 +1,24 @@
+NWB Inspector found CRITICAL issues in file at path sub-c00e0ffb-b8c6-4953-b9e7-975a3f4fd989/sub-c00e0ffb-b8c6-4953-b9e7-975a3f4fd989_ses-7a887357-850a-4378-bd2a-b5bc8bdd3aac_behavior+ecephys.nwb in dandiset ID 000045 with `content_id='643576b5-2463-403e-b5de-511b96417763'`!
+
+InspectorMessage(
+    message="Subject weight '27.0' does not follow the expected form '[numeric] [unit]'. For example, '2.3 kg'. Without a unit, the weight is ambiguous. Valid units are: 'kg', 'g', 'mg', 'ug', 'μg', 'ng', 'pg'.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_weight',
+    object_type='IblSubject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='The length of the first dimension of data (511529) does not match the length of timestamps (1534473).',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_timestamps_match_first_dimension',
+    object_type='TimeSeries',
+    object_name='position',
+    location='/processing/behavior/BehavioralTimeSeries/position',
+    file_path=None
+)
+
