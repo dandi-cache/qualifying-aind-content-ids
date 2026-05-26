@@ -1,0 +1,24 @@
+NWB Inspector found CRITICAL issues in file at path sub-JenkinsC/sub-JenkinsC_ses-20160127T110630_behavior+ecephys.nwb in dandiset ID 000121 with `content_id='3eefc88e-f43f-4b4e-a8ef-8e233322d3f1'`!
+
+InspectorMessage(
+    message='Subject is missing age and date_of_birth. Please specify at least one of these fields.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_age',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='Traceback (most recent call last):\n  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/nwbinspector/_nwb_inspection.py", line 459, in run_checks\n    output = check_function(nwbfile_object)\n  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/nwbinspector/_registration.py", line 75, in auto_parse_some_output\n    output = check_function(*args, **kwargs)\n  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/nwbinspector/checks/_tables.py", line 378, in check_time_intervals_duration\n    head_all_nan = np.all(np.isnan(head))\n                          ~~~~~~~~^^^^^^\nValueError: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (200,) + inhomogeneous part.\n',
+    importance=<Importance.ERROR: 4>,
+    severity=<Severity.LOW: 1>,
+    check_function_name="During evaluation of 'check_time_intervals_duration' - <class 'ValueError'>: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (200,) + inhomogeneous part.",
+    object_type=None,
+    object_name=None,
+    location=None,
+    file_path='unknown'
+)
+
