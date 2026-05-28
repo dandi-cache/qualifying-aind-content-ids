@@ -1,0 +1,35 @@
+NWB Inspector found CRITICAL issues in file at path sub-DL009/sub-DL009_ses-20210417-20210417-190726-s5-p2_behavior+core.nwb in dandiset ID 001619 with `content_id='0cf2cdfa-7c77-4743-b434-209a73b49a96'`!
+
+InspectorMessage(
+    message='Unit 1 contains descending spike times, which is always a data error. Spike times should be sorted in strictly ascending order.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_ascending_spike_times',
+    object_type='Units',
+    object_name='units',
+    location=None,
+    file_path=None
+)
+
+InspectorMessage(
+    message="Subject weight '    ' does not follow the expected form '[numeric] [unit]'. For example, '2.3 kg'. Without a unit, the weight is ambiguous. Valid units are: 'kg', 'g', 'mg', 'ug', 'μg', 'ng', 'pg'.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_weight',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='All start_time values are the same value 0.0. start_times should be in non-decreasing order and should be with respect to the session start time.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_time_intervals_start_time_not_constant',
+    object_type='TimeIntervals',
+    object_name='trials',
+    location=None,
+    file_path=None
+)
+
