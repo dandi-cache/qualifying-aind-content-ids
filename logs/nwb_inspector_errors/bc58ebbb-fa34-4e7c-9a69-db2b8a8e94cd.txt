@@ -1,0 +1,24 @@
+NWB Inspector found CRITICAL issues in file at path sub-229CR/sub-229CR_ses-20191011T142752_behavior+ecephys+image.nwb in dandiset ID 000231 with `content_id='bc58ebbb-fa34-4e7c-9a69-db2b8a8e94cd'`!
+
+InspectorMessage(
+    message='Unit 36 contains equal consecutive spike times. This violates the neural refractory period for single-unit data. If your recording resolution does not allow distinguishing these spikes, set the `resolution` field on the Units table to suppress this check.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_ascending_spike_times',
+    object_type='Units',
+    object_name='units',
+    location=None,
+    file_path=None
+)
+
+InspectorMessage(
+    message="The external file 'sub-229CR_ses-20191011T142752_behavior+ecephys+image/508227b6-554e-465b-a1a3-64a87b546c3c_external_file_0.mkv' does not exist. Please confirm the relative location to the NWBFile.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_image_series_external_file_valid',
+    object_type='ImageSeries',
+    object_name='behavioral video',
+    location='/acquisition/behavioral video',
+    file_path=None
+)
+
