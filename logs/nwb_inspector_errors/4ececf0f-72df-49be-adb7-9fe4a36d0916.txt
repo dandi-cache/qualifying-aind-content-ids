@@ -1,0 +1,35 @@
+NWB Inspector found CRITICAL issues in file at path sub-DT8/sub-DT8_ses-20170202-72um-576um-170202-092033_behavior+ecephys.nwb in dandiset ID 000213 with `content_id='4ececf0f-72df-49be-adb7-9fe4a36d0916'`!
+
+InspectorMessage(
+    message='SpatialSeries should have 1 column (x), 2 columns (x, y), or 3 columns (x, y, z).',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_spatial_series_dims',
+    object_type='SpatialSeries',
+    object_name='orientation',
+    location='/processing/behavior/allocentric_frame_tracking/orientation',
+    file_path=None
+)
+
+InspectorMessage(
+    message='Subject is missing age and date_of_birth. Please specify at least one of these fields.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_age',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='Subject.sex is missing.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_sex',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
