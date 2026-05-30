@@ -1,0 +1,24 @@
+NWB Inspector found CRITICAL issues in file at path sub-164/sub-164_ses-20200124T161514_image+ophys.nwb in dandiset ID 000167 with `content_id='f07aa308-d409-435e-8aaa-6da108cd38e4'`!
+
+InspectorMessage(
+    message="The external file 'sub-164_ses-20200124T161514_image+ophys/dfbe7f63-8653-4084-aa84-c282ffcd7871_external_file_0.mkv' does not exist. Please confirm the relative location to the NWBFile.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_image_series_external_file_valid',
+    object_type='ImageSeries',
+    object_name='ExternalVideoFiles',
+    location='/acquisition/ExternalVideoFiles',
+    file_path=None
+)
+
+InspectorMessage(
+    message="Subject weight '33' does not follow the expected form '[numeric] [unit]'. For example, '2.3 kg'. Without a unit, the weight is ambiguous. Valid units are: 'kg', 'g', 'mg', 'ug', 'μg', 'ng', 'pg'.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_weight',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
