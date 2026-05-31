@@ -1,0 +1,24 @@
+NWB Inspector found CRITICAL issues in file at path sub-ZY70/sub-ZY70_ses-ZY70-20210909NP-Striatum.nwb in dandiset ID 001610 with `content_id='ee1e0558-b498-4fb1-941e-90d1f27a0c6c'`!
+
+InspectorMessage(
+    message='Unit 1 contains descending spike times, which is always a data error. Spike times should be sorted in strictly ascending order.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_ascending_spike_times',
+    object_type='Units',
+    object_name='units',
+    location=None,
+    file_path=None
+)
+
+InspectorMessage(
+    message='All start_time values are the same value 0.0. start_times should be in non-decreasing order and should be with respect to the session start time.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_time_intervals_start_time_not_constant',
+    object_type='TimeIntervals',
+    object_name='trials',
+    location=None,
+    file_path=None
+)
+
