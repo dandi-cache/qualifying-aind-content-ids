@@ -1,0 +1,24 @@
+NWB Inspector found CRITICAL issues in file at path sub-YMV05/sub-YMV05_ses-YMV05-170912_ecephys.nwb in dandiset ID 000166 with `content_id='de2ac064-2853-40e3-b172-7138d8d94124'`!
+
+InspectorMessage(
+    message='Subject is missing age and date_of_birth. Please specify at least one of these fields.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_age',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message="Subject weight '28-35g' does not follow the expected form '[numeric] [unit]'. For example, '2.3 kg'. Without a unit, the weight is ambiguous. Valid units are: 'kg', 'g', 'mg', 'ug', 'μg', 'ng', 'pg'.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_weight',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
