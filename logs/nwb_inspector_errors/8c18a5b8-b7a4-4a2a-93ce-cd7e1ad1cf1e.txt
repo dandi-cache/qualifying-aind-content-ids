@@ -1,0 +1,35 @@
+NWB Inspector found CRITICAL issues in file at path sub-18a54f60-534b-4ed5-8bda-b434079b8ab8/sub-18a54f60-534b-4ed5-8bda-b434079b8ab8_ses-e1931de1-cf7b-49af-af33-2ade15e8abe7_behavior+ecephys.nwb in dandiset ID 000045 with `content_id='8c18a5b8-b7a4-4a2a-93ce-cd7e1ad1cf1e'`!
+
+InspectorMessage(
+    message="Subject weight '28.3' does not follow the expected form '[numeric] [unit]'. For example, '2.3 kg'. Without a unit, the weight is ambiguous. Valid units are: 'kg', 'g', 'mg', 'ug', 'μg', 'ng', 'pg'.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_weight',
+    object_type='IblSubject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='Subject species is missing.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_species_exists',
+    object_type='IblSubject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='The length of the first dimension of data (348216) does not match the length of timestamps (1044799).',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_timestamps_match_first_dimension',
+    object_type='TimeSeries',
+    object_name='position',
+    location='/processing/behavior/BehavioralTimeSeries/position',
+    file_path=None
+)
+
