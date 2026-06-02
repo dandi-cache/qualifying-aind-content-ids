@@ -1,0 +1,24 @@
+NWB Inspector found CRITICAL issues in file at path sub-BAYLORGC74/sub-BAYLORGC74_ses-20190626_obj-175u493_ecephys+ogen.nwb in dandiset ID 000894 with `content_id='a8bfde9e-932c-4daa-af52-bc856c93313d'`!
+
+InspectorMessage(
+    message='Unit 3 contains descending spike times, which is always a data error. Spike times should be sorted in strictly ascending order.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_ascending_spike_times',
+    object_type='Units',
+    object_name='units',
+    location=None,
+    file_path=None
+)
+
+InspectorMessage(
+    message="Subject weight 'weightBefore: 21.9\nweightAfter: 21.3' does not follow the expected form '[numeric] [unit]'. For example, '2.3 kg'. Without a unit, the weight is ambiguous. Valid units are: 'kg', 'g', 'mg', 'ug', 'μg', 'ng', 'pg'.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_weight',
+    object_type='Subject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+

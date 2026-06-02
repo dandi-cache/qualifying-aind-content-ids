@@ -93417,3 +93417,21 @@ Traceback (most recent call last):
   File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 892, in _get_data
     raise NotFoundError(f"No such Dandiset: {self.identifier}")
 dandi.exceptions.NotFoundError: No such Dandiset: 001533
+Error retrieving information about file at path 001530/nwb-behaviour-processed-raw/PG038/sub-PG038_ses-20210316T152753-processed-behavior-raw.nwb in dandiset ID 001530 with `{content_id=}`!
+
+<class 'dandi.exceptions.NotFoundError'>:No asset at path '001530/nwb-behaviour-processed-raw/PG038/sub-PG038_ses-20210316T152753-processed-behavior-raw.nwb'
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1305, in get_asset_by_path
+    (asset,) = (
+    ^^^^^^^^
+ValueError: not enough values to unpack (expected 1, got 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/code/update.py", line 49, in _run
+    asset = dandiset.get_asset_by_path(path=first_path)
+  File "/home/runner/work/qualifying-aind-content-ids/qualifying-aind-content-ids/envs/.venv/lib/python3.13/site-packages/dandi/dandiapi.py", line 1309, in get_asset_by_path
+    raise NotFoundError(f"No asset at path {path!r}")
+dandi.exceptions.NotFoundError: No asset at path '001530/nwb-behaviour-processed-raw/PG038/sub-PG038_ses-20210316T152753-processed-behavior-raw.nwb'
