@@ -1,0 +1,35 @@
+NWB Inspector found CRITICAL issues in file at path sub-0f47b24d-3909-428c-a18d-666006c7c834/sub-0f47b24d-3909-428c-a18d-666006c7c834_ses-14118119-da55-43b1-9722-dc6507f7cdad_behavior+image.nwb in dandiset ID 000045 with `content_id='c355c1e7-8608-4aa8-ae9e-320120a07ef7'`!
+
+InspectorMessage(
+    message="The external file 'http://ibl.flatironinstitute.org/angelakilab/Subjects/NYU-11/2019-12-09/001/raw_video_data/_iblrig_leftCamera.raw.4745041d-7575-4a1f-95d0-af5cbc893e5e.mp4' does not exist. Please confirm the relative location to the NWBFile.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_image_series_external_file_valid',
+    object_type='ImageSeries',
+    object_name='camera_raw',
+    location='/acquisition/camera_raw',
+    file_path=None
+)
+
+InspectorMessage(
+    message="Subject weight '18.89' does not follow the expected form '[numeric] [unit]'. For example, '2.3 kg'. Without a unit, the weight is ambiguous. Valid units are: 'kg', 'g', 'mg', 'ug', 'μg', 'ng', 'pg'.",
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_subject_weight',
+    object_type='IblSubject',
+    object_name='subject',
+    location='/general/subject',
+    file_path=None
+)
+
+InspectorMessage(
+    message='The length of the first dimension of data (176403) does not match the length of timestamps (329390).',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_timestamps_match_first_dimension',
+    object_type='TimeSeries',
+    object_name='position',
+    location='/processing/behavior/BehavioralTimeSeries/position',
+    file_path=None
+)
+
