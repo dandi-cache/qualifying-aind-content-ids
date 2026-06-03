@@ -1,0 +1,24 @@
+NWB Inspector found CRITICAL issues in file at path sub-673647168/sub-673647168_ses-698273664_behavior+ophys.nwb in dandiset ID 000039 with `content_id='d6556ad0-7d15-4e5c-a356-19faaee8429f'`!
+
+InspectorMessage(
+    message='This Units table does not have a spike_times column. A Units table without spike times is likely an error or misuse of the neurodata type.',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_units_table_has_spikes',
+    object_type='Units',
+    object_name='units',
+    location=None,
+    file_path=None
+)
+
+InspectorMessage(
+    message='The length of the first dimension of data (65616) does not match the length of timestamps (65617).',
+    importance=<Importance.CRITICAL: 2>,
+    severity=<Severity.LOW: 1>,
+    check_function_name='check_timestamps_match_first_dimension',
+    object_type='TimeSeries',
+    object_name='MotionCorrection',
+    location='/processing/brain_observatory_pipeline/MotionCorrection',
+    file_path=None
+)
+
