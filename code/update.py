@@ -125,7 +125,8 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
                     si_failure = True
                     continue
 
-            if len(set(channel_locations)) != extractor.get_num_channels():
+            unique_locations = set(tuple(loc) for loc in channel_locations)
+            if len(unique_locations) != extractor.get_num_channels():
                 si_failure = True
                 continue
 
