@@ -126,7 +126,6 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             if neurodata_object.rate is not None and neurodata_object.rate > 10_000:
                 qualifying_aind_content_ids.add(content_id)
                 continue
-
         processed_ids.add(content_id)
 
     with error_ids_file_path.open(mode="w") as file_stream:
