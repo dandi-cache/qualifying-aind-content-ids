@@ -8,8 +8,8 @@ import hdmf_zarr
 import nwbinspector
 import pynwb
 import remfile
-import yaml
 import spikeinterface.extractors
+import yaml
 
 
 def _run(base_directory: pathlib.Path, limit: int | None) -> None:
@@ -124,7 +124,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
                 continue
 
         processed_ids.add(content_id)
-    
+
     with error_ids_file_path.open(mode="w") as file_stream:
         yaml.safe_dump(data=sorted(list(error_ids)), stream=file_stream)
     with processed_ids_file_path.open(mode="w") as file_stream:
