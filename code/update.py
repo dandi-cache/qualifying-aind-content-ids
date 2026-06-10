@@ -108,7 +108,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
 
         # Require channel locations to exist and be unique
         try:
-            extractor = spikeinterface.extractors.NwbRecordingExtractor(file=h5py_file)
+            extractor = spikeinterface.extractors.NwbRecordingExtractor(file_path=s3_url, stream_mode="remfile")
             channel_locations = extractor.get_channel_locations()
         except Exception as exception:
             if "no channel locations" in str(exception).lower():
