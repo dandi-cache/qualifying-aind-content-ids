@@ -107,20 +107,26 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             continue
 
         # Require channel locations to exist and be unique
-        try:
-            extractor = spikeinterface.extractors.NwbRecordingExtractor(file_path=s3_url, stream_mode="remfile")
-            channel_locations = extractor.get_channel_locations()
-        except Exception as exception:
-            if "no channel locations" in str(exception).lower():
-                processed_ids.add(content_id)
-                continue
-            message = f"Other error during spikeinterface read: {exception}"
-            raise RuntimeError(message) from exception
-            
-        if len(set(channel_locations)) != extractor.get_num_channels():
-            processed_ids.add(content_id)
-            continue
+        si_failure = False
+        electrical_series_names = spikeinterface.extractors.NwbRecordingExtractor.fetch_electrical_series_path(file_path=s3_url, stream_mode="remfile")
+        for electrical_series_name in electrical_series_names:
+            extractor = spikeinterface.extractors.NwbRecordingExtractor(file_path=s3_url, stream_mode="remfile", electrical_series=electrical_series_name)
 
+            try:
+                channel_locations = extractor.get_channel_locations()
+            except Exception as exception:
+                if "no channel locations" in str(exception).lower():
+                    si_failure = True
+                    continue
+                
+            if len(set(channel_locations)) != extractor.get_num_channels():
+                si_failure = True
+                continue
+                
+        if si_failure:
+            processed_ids.add(content_id)
+            continue     
+        
         # Accept any file with an ElectricalSeries in the acquisition submodule with a rate above 10kHz
         for neurodata_object in nwbfile.acquisition.values():
             if not isinstance(neurodata_object, pynwb.ecephys.ElectricalSeries):
