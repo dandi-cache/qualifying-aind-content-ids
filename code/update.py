@@ -111,9 +111,12 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             extractor = spikeinterface.extractors.NwbRecordingExtractor(file=h5py_file)
             channel_locations = extractor.get_channel_locations()
         except Exception as exception:
-            if "no channel locations" in str(exception):
+            if "no channel locations" in str(exception).lower():
                 processed_ids.add(content_id)
                 continue
+            message = f"Other error during spikeinterface read: {exception}"
+            raise RuntimeError(message) from exception
+            
         if len(set(channel_locations)) != extractor.get_num_channels():
             processed_ids.add(content_id)
             continue
