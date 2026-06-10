@@ -117,7 +117,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
         if len(set(channel_locations)) != extractor.get_num_channels():
             processed_ids.add(content_id)
             continue
-        
+
         # Accept any file with an ElectricalSeries in the acquisition submodule with a rate above 10kHz
         for neurodata_object in nwbfile.acquisition.values():
             if not isinstance(neurodata_object, pynwb.ecephys.ElectricalSeries):
