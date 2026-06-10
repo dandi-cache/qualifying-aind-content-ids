@@ -9,6 +9,7 @@ import nwbinspector
 import pynwb
 import remfile
 import yaml
+import spikeinterface.extractors
 
 
 def _run(base_directory: pathlib.Path, limit: int | None) -> None:
@@ -105,6 +106,15 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             error_ids.add(content_id)
             continue
 
+        # Require channel locations
+        try:
+            extractor = spikeinterface.extractors.NwbRecordingExtractor(file=h5py_file)
+            extractor.get_channel_locations()
+        except Exception as exception:
+            if "no channel locations" in str(exception):
+                continue
+
+        # Accept any file with an ElectricalSeries in the acquisition submodule with a rate above 10kHz
         for neurodata_object in nwbfile.acquisition.values():
             if not isinstance(neurodata_object, pynwb.ecephys.ElectricalSeries):
                 continue
@@ -114,7 +124,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
                 continue
 
         processed_ids.add(content_id)
-
+    
     with error_ids_file_path.open(mode="w") as file_stream:
         yaml.safe_dump(data=sorted(list(error_ids)), stream=file_stream)
     with processed_ids_file_path.open(mode="w") as file_stream:
