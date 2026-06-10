@@ -108,14 +108,14 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
 
         # Require channel locations to exist and be unique
         si_failure = False
-        electrical_series_names = (
+        electrical_series_paths = (
             spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
                 file_path=s3_url, stream_mode="remfile"
             )
         )
-        for electrical_series_name in electrical_series_names:
+        for electrical_series_path in electrical_series_paths:
             extractor = spikeinterface.extractors.NwbRecordingExtractor(
-                file_path=s3_url, stream_mode="remfile", electrical_series=electrical_series_name
+                file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
             )
 
             try:
