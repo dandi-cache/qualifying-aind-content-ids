@@ -107,17 +107,30 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             continue
 
         # Require channel locations to exist and be unique
-        try:
-            extractor = spikeinterface.extractors.NwbRecordingExtractor(file_path=s3_url, stream_mode="remfile")
-            channel_locations = extractor.get_channel_locations()
-        except Exception as exception:
-            if "no channel locations" in str(exception).lower():
-                processed_ids.add(content_id)
+        si_failure = False
+        electrical_series_paths = (
+            spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
+                file_path=s3_url, stream_mode="remfile"
+            )
+        )
+        for electrical_series_path in electrical_series_paths:
+            extractor = spikeinterface.extractors.NwbRecordingExtractor(
+                file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
+            )
+
+            try:
+                channel_locations = extractor.get_channel_locations()
+            except Exception as exception:
+                if "no channel locations" in str(exception).lower():
+                    si_failure = True
+                    continue
+
+            unique_locations = set(tuple(loc) for loc in channel_locations)
+            if len(unique_locations) != extractor.get_num_channels():
+                si_failure = True
                 continue
-            message = f"Other error during spikeinterface read: {exception}"
-            raise RuntimeError(message) from exception
-            
-        if len(set(channel_locations)) != extractor.get_num_channels():
+
+        if si_failure:
             processed_ids.add(content_id)
             continue
 
