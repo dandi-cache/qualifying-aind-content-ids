@@ -108,27 +108,41 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
 
         # Require channel locations to exist and be unique
         si_failure = False
-        electrical_series_paths = (
-            spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
-                file_path=s3_url, stream_mode="remfile"
+        try:
+            electrical_series_paths = (
+                spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
+                    file_path=s3_url, stream_mode="remfile"
+                )
             )
-        )
-        for electrical_series_path in electrical_series_paths:
-            extractor = spikeinterface.extractors.NwbRecordingExtractor(
-                file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
-            )
+            for electrical_series_path in electrical_series_paths:
+                extractor = spikeinterface.extractors.NwbRecordingExtractor(
+                    file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
+                )
 
-            try:
-                channel_locations = extractor.get_channel_locations()
-            except Exception as exception:
-                if "no channel locations" in str(exception).lower():
+                try:
+                    channel_locations = extractor.get_channel_locations()
+                except Exception as exception:
+                    if "no channel locations" in str(exception).lower():
+                        si_failure = True
+                        continue
+                    raise
+
+                unique_locations = set(tuple(loc) for loc in channel_locations)
+                if len(unique_locations) != extractor.get_num_channels():
                     si_failure = True
                     continue
+        except Exception as exception:
+            with file_open_errors_log_file_path.open(mode="a") as file_stream:
+                message = (
+                    f"Error validating SpikeInterface metadata for file at path {first_path} "
+                    f"in dandiset ID {dandiset_id} from URL {s3_url} with `{content_id=}`!\n\n"
+                    f"{type(exception)}:{str(exception)}\n\n"
+                    f"{traceback.format_exc()}"
+                )
+                file_stream.write(message)
 
-            unique_locations = set(tuple(loc) for loc in channel_locations)
-            if len(unique_locations) != extractor.get_num_channels():
-                si_failure = True
-                continue
+            error_ids.add(content_id)
+            continue
 
         if si_failure:
             processed_ids.add(content_id)
