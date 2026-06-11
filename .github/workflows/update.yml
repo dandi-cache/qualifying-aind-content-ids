@@ -62,7 +62,15 @@ jobs:
         run: |
           git add .
           git commit --message "update" || true  # || true in case of no changes
-          git push
+          for attempt in 1 2 3; do
+            if git push; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              exit 1
+            fi
+            git pull --rebase
+          done
 
       - name: Run minification
         run: uv run --project envs python code/minify.py
