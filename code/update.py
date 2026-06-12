@@ -107,7 +107,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             continue
 
         # Require channel locations to exist and be unique
-        si_failure = False
+        no_channel_loations = False
         try:
             electrical_series_paths = (
                 spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
@@ -123,13 +123,13 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
                     channel_locations = extractor.get_channel_locations()
                 except Exception as exception:
                     if "no channel locations" in str(exception).lower():
-                        si_failure = True
+                        no_channel_loations = True
                         continue
                     raise
 
                 unique_locations = set(tuple(loc) for loc in channel_locations)
                 if len(unique_locations) != extractor.get_num_channels():
-                    si_failure = True
+                    no_channel_loations = True
                     continue
         except Exception as exception:
             with file_open_errors_log_file_path.open(mode="a") as file_stream:
@@ -144,7 +144,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             error_ids.add(content_id)
             continue
 
-        if si_failure:
+        if no_channel_loations is True:
             processed_ids.add(content_id)
             continue
 
