@@ -12,6 +12,52 @@ import spikeinterface.extractors
 import yaml
 
 
+def _electrical_series_qualifies(extractor: spikeinterface.extractors.NwbRecordingExtractor) -> bool:
+    """
+    Determine whether a single ElectricalSeries (as a SpikeInterface extractor) qualifies.
+
+    A series qualifies when it has unique channel locations, a rate above 10kHz, and a duration
+    longer than 120 seconds.
+    """
+    try:
+        channel_locations = extractor.get_channel_locations()
+    except Exception as exception:
+        if "no channel locations" in str(exception).lower():
+            return False
+        raise
+
+    unique_locations = set(tuple(loc) for loc in channel_locations)
+    if len(unique_locations) != extractor.get_num_channels():
+        return False
+
+    if extractor.get_sampling_frequency() <= 10_000:
+        return False
+
+    if extractor.get_total_duration() <= 120:
+        return False
+
+    return True
+
+
+def _nwbfile_qualifies(s3_url: str) -> bool:
+    """Determine whether an NWB file qualifies, which is when at least one ElectricalSeries qualifies."""
+    electrical_series_paths = spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
+        file_path=s3_url, stream_mode="remfile"
+    )
+    for electrical_series_path in electrical_series_paths:
+        # Only consider electrical series under the acquisition submodule
+        if not electrical_series_path.startswith("acquisition/"):
+            continue
+
+        extractor = spikeinterface.extractors.NwbRecordingExtractor(
+            file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
+        )
+        if _electrical_series_qualifies(extractor=extractor):
+            return True
+
+    return False
+
+
 def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     submodule_dir = base_directory / "sourcedata" / "content-id-to-nwb-files" / "derivatives"
     submodule_file_path = submodule_dir / "content_id_to_nwb_files.yaml"
@@ -106,31 +152,9 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             error_ids.add(content_id)
             continue
 
-        # Require channel locations to exist and be unique
-        no_channel_loations = False
+        # Qualify the session if at least one ElectricalSeries under acquisition qualifies
         try:
-            electrical_series_paths = (
-                spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
-                    file_path=s3_url, stream_mode="remfile"
-                )
-            )
-            for electrical_series_path in electrical_series_paths:
-                extractor = spikeinterface.extractors.NwbRecordingExtractor(
-                    file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
-                )
-
-                try:
-                    channel_locations = extractor.get_channel_locations()
-                except Exception as exception:
-                    if "no channel locations" in str(exception).lower():
-                        no_channel_loations = True
-                        continue
-                    raise
-
-                unique_locations = set(tuple(loc) for loc in channel_locations)
-                if len(unique_locations) != extractor.get_num_channels():
-                    no_channel_loations = True
-                    continue
+            qualifies = _nwbfile_qualifies(s3_url=s3_url)
         except Exception as exception:
             with file_open_errors_log_file_path.open(mode="a") as file_stream:
                 message = (
@@ -144,18 +168,8 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             error_ids.add(content_id)
             continue
 
-        if no_channel_loations is True:
-            processed_ids.add(content_id)
-            continue
-
-        # Accept any file with an ElectricalSeries in the acquisition submodule with a rate above 10kHz
-        for neurodata_object in nwbfile.acquisition.values():
-            if not isinstance(neurodata_object, pynwb.ecephys.ElectricalSeries):
-                continue
-
-            if neurodata_object.rate is not None and neurodata_object.rate > 10_000:
-                qualifying_aind_content_ids.add(content_id)
-                continue
+        if qualifies:
+            qualifying_aind_content_ids.add(content_id)
         processed_ids.add(content_id)
 
     with error_ids_file_path.open(mode="w") as file_stream:
