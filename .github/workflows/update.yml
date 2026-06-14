@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: "0 6/4 * * *"
   workflow_dispatch:
+    inputs:
+      limit:
+        description: "The number of sessions (content IDs) to process in this run."
+        required: false
+        type: number
+        default: 2000
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -65,7 +71,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          uv run --project envs python code/update.py
+          uv run --project envs python code/update.py --limit "${{ github.event.inputs.limit || '2000' }}"
 
       - name: Upload YAML
         run: |
