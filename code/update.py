@@ -180,7 +180,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
 
 
 if __name__ == "__main__":
-    repo_head = pathlib.Path(__file__).parent.parent
+    default_base_directory = pathlib.Path(__file__).parent.parent
 
     parser = argparse.ArgumentParser(description="Process qualifying AIND content IDs.")
     parser.add_argument(
@@ -189,6 +189,16 @@ if __name__ == "__main__":
         default=2_000,
         help="The number of sessions (content IDs) to process in this run.",
     )
+    parser.add_argument(
+        "--base-directory",
+        type=pathlib.Path,
+        default=default_base_directory,
+        help=(
+            "The directory containing the `sourcedata`, `derivatives`, and `logs` directories. "
+            "Defaults to the repository root. Point this at a separate checkout (such as the "
+            "`derivatives` DataLad dataset) to keep generated results off the code branch."
+        ),
+    )
     args = parser.parse_args()
 
-    _run(repo_head, limit=args.limit)
+    _run(base_directory=args.base_directory, limit=args.limit)

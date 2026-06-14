@@ -1,3 +1,4 @@
+import argparse
 import gzip
 import json
 import pathlib
@@ -16,8 +17,21 @@ def _minify(file_path: pathlib.Path, /) -> None:
 
 
 if __name__ == "__main__":
-    repo_head = pathlib.Path(__file__).parent.parent
-    derivatives_dir = repo_head / "derivatives"
+    default_base_directory = pathlib.Path(__file__).parent.parent
+
+    parser = argparse.ArgumentParser(description="Minify derivative YAML files to compressed JSON.")
+    parser.add_argument(
+        "--base-directory",
+        type=pathlib.Path,
+        default=default_base_directory,
+        help=(
+            "The directory containing the `derivatives` directory. Defaults to the repository root. "
+            "Point this at a separate checkout (such as the `derivatives` DataLad dataset)."
+        ),
+    )
+    args = parser.parse_args()
+
+    derivatives_dir = args.base_directory / "derivatives"
 
     for yaml_file_path in derivatives_dir.glob("*.yaml"):
         _minify(yaml_file_path)

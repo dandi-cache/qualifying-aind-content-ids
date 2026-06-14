@@ -45,10 +45,11 @@ curl https://raw.githubusercontent.com/dandi-cache/qualifying-aind-content-ids/r
 
 ## Repeated use
 
-If you plan on using this cache regularly, clone this repository:
+If you plan on using this cache regularly, clone the lightweight `min` branch, which holds
+only the compressed result:
 
 ```bash
-git clone https://github.com/dandi-cache/qualifying-aind-content-ids.git
+git clone --branch min --single-branch https://github.com/dandi-cache/qualifying-aind-content-ids.git
 ```
 
 Then set up a CRON on your system to pull the latest version of the cache at your desired frequency.
@@ -60,3 +61,18 @@ For example, through `crontab -e`, add:
 ```
 
 This will minimize data overhead by only loading the most recent changes.
+
+
+
+## Repository layout
+
+Results are kept on dedicated branches so that `main` only ever tracks code:
+
+- **`main`** — the code (`code/`, `envs/`, the update workflow). It is not modified by the
+  automated update.
+- **`derivatives`** — a persistent [DataLad](https://www.datalad.org/) dataset holding the full
+  results (`derivatives/`, `logs/`) and the `content-id-to-nwb-files` input as a subdataset. Each
+  update is recorded with `datalad run`, so every commit carries the command, the exact input
+  commit, and the output diff as reproducible provenance. History is retained.
+- **`min`** — the consumer-facing publication artifact: the minified, compressed JSON
+  (`derivatives/*.min.json.gz`). It is force-recreated on every update.

@@ -45,59 +45,20 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v5
 
-      - name: Cache submodule
-        uses: actions/cache@v4
-        with:
-          path: |
-            sourcedata/content-id-to-nwb-files
-            .git/modules/sourcedata
-          key: sourcedata-content-id-to-nwb-files-${{ github.run_id }}
-          restore-keys: sourcedata-content-id-to-nwb-files-
-
-      - name: Update submodule
+      - name: Install DataLad
         run: |
-          for attempt in 1 2 3; do
-            if git submodule update --init --remote sourcedata/content-id-to-nwb-files; then
-              break
-            fi
-            if [ "$attempt" -eq 3 ]; then
-              exit 1
-            fi
-            sleep 30
-          done
+          sudo apt-get update
+          sudo apt-get install -y git-annex
+          uv tool install datalad
+          echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
 
-      - name: Run update
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-          uv run --project envs python code/update.py --limit "${{ github.event.inputs.limit || '2000' }}"
-
-      - name: Upload YAML
-        run: |
-          git add .
-          git commit --message "update" || true  # || true in case of no changes
-          for attempt in 1 2 3; do
-            if git push; then
-              break
-            fi
-            if [ "$attempt" -eq 3 ]; then
-              exit 1
-            fi
-            git pull --rebase
-          done
-
-      - name: Run minification
-        run: uv run --project envs python code/minify.py
-
-      - name: Upload minification
-        run: |
-          git push origin --delete min || true  # || true in case branch doesn't exist yet
-
-          git checkout -b min
-          git add .
-          git commit --message "update min" || true  # || true in case of no changes
-          git push --set-upstream origin min
+      - name: Run update with provenance
+        env:
+          REPO_URL: https://x-access-token:${{ secrets._GITHUB_API_KEY }}@github.com/${{ github.repository }}.git
+          WORKSPACE: ${{ github.workspace }}
+          LIMIT: ${{ github.event.inputs.limit || '2000' }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: bash code/update_pipeline.sh
 
   NotifyOnFailure:
     runs-on: ubuntu-latest
