@@ -33,12 +33,11 @@ ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 
 WORKDIR /opt/qualifying-aind-content-ids
 
-# Resolve the loose dependencies from pyproject.toml into a pinned environment, then record
-# the exact resolved versions inside the image so the build's provenance is inspectable. The
-# image digest is the authoritative lock; this file is purely for human inspection.
+# Resolve the loose dependencies from pyproject.toml into a pinned environment. The image
+# (by digest) is the authoritative lock; the exact resolved versions can be read back at any
+# time with `pip freeze`.
 COPY envs/pyproject.toml ./pyproject.toml
-RUN pip install . \
-    && pip freeze > /opt/requirements.lock.txt
+RUN pip install .
 
 # The processing code itself.
 COPY code/ ./code/
