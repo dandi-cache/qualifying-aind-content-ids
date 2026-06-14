@@ -1,3 +1,4 @@
+import argparse
 import itertools
 import pathlib
 import traceback
@@ -169,4 +170,13 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
 if __name__ == "__main__":
     repo_head = pathlib.Path(__file__).parent.parent
 
-    _run(repo_head, limit=2_000)
+    parser = argparse.ArgumentParser(description="Process qualifying AIND content IDs.")
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=2_000,
+        help="The number of sessions (content IDs) to process in this run.",
+    )
+    args = parser.parse_args()
+
+    _run(repo_head, limit=args.limit)
