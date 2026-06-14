@@ -12,7 +12,7 @@ import spikeinterface.extractors
 import yaml
 
 
-def _electrical_series_qualifies(s3_url: str, electrical_series_path: str) -> bool:
+def _any_electrical_series_qualifies(s3_url: str, electrical_series_path: str) -> bool:
     """
     Determine whether a single ElectricalSeries qualifies.
 
@@ -52,7 +52,7 @@ def _nwbfile_qualifies(s3_url: str) -> bool:
         file_path=s3_url, stream_mode="remfile"
     )
     for electrical_series_path in electrical_series_paths:
-        if _electrical_series_qualifies(s3_url=s3_url, electrical_series_path=electrical_series_path):
+        if _any_electrical_series_qualifies(s3_url=s3_url, electrical_series_path=electrical_series_path):
             return True
 
     return False
