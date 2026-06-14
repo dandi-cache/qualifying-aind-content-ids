@@ -64,19 +64,22 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     nwb_inspector_errors_log_dir = base_directory / "logs" / "nwb_inspector_errors"
     nwb_inspector_errors_log_dir.mkdir(exist_ok=True)
     error_ids_file_path = base_directory / "derivatives" / "error_ids.yaml"
-    with error_ids_file_path.open(mode="r") as file_stream:
+    with error_ids_file_path.open(mode="a+") as file_stream:
+        file_stream.seek(0)
         yaml_content = yaml.safe_load(file_stream)
         error_ids = set(yaml_content) if yaml_content is not None else set()
 
     processed_ids_file_path = base_directory / "derivatives" / "processed_ids.yaml"
-    with processed_ids_file_path.open(mode="r") as file_stream:
+    with processed_ids_file_path.open(mode="a+") as file_stream:
+        file_stream.seek(0)
         yaml_content = yaml.safe_load(file_stream)
         processed_ids = set(yaml_content) if yaml_content is not None else set()
 
     content_ids_to_process = set(content_id_to_dandiset_paths.keys()) - error_ids - processed_ids
 
     qualifying_aind_content_ids_file_path = base_directory / "derivatives" / "qualifying_aind_content_ids.yaml"
-    with qualifying_aind_content_ids_file_path.open(mode="r") as file_stream:
+    with qualifying_aind_content_ids_file_path.open(mode="a+") as file_stream:
+        file_stream.seek(0)
         yaml_content = yaml.safe_load(file_stream)
         qualifying_aind_content_ids = set(yaml_content) if yaml_content is not None else set()
 
