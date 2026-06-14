@@ -12,13 +12,20 @@ import spikeinterface.extractors
 import yaml
 
 
-def _electrical_series_qualifies(extractor: spikeinterface.extractors.NwbRecordingExtractor) -> bool:
+def _electrical_series_qualifies(s3_url: str, electrical_series_path: str) -> bool:
     """
-    Determine whether a single ElectricalSeries (as a SpikeInterface extractor) qualifies.
+    Determine whether a single ElectricalSeries qualifies.
 
-    A series qualifies when it has unique channel locations, a rate above 10kHz, and a duration
-    longer than 120 seconds.
+    A series qualifies when it is under the acquisition submodule, has unique channel locations,
+    a rate above 10kHz, and a duration longer than 120 seconds.
     """
+    if not electrical_series_path.startswith("acquisition/"):
+        return False
+
+    extractor = spikeinterface.extractors.NwbRecordingExtractor(
+        file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
+    )
+
     try:
         channel_locations = extractor.get_channel_locations()
     except Exception as exception:
@@ -45,14 +52,7 @@ def _nwbfile_qualifies(s3_url: str) -> bool:
         file_path=s3_url, stream_mode="remfile"
     )
     for electrical_series_path in electrical_series_paths:
-        # Only consider electrical series under the acquisition submodule
-        if not electrical_series_path.startswith("acquisition/"):
-            continue
-
-        extractor = spikeinterface.extractors.NwbRecordingExtractor(
-            file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
-        )
-        if _electrical_series_qualifies(extractor=extractor):
+        if _electrical_series_qualifies(s3_url=s3_url, electrical_series_path=electrical_series_path):
             return True
 
     return False
