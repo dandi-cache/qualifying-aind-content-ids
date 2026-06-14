@@ -1,11 +1,14 @@
 # syntax=docker/dockerfile:1
 
-# The container IS the project's pinned, reproducible environment and the official way to
-# run the pipeline. The loose dependencies declared in envs/pyproject.toml are resolved
-# fresh at build time, and the resulting image (by digest) is the lock -- there is no
-# lockfile in the repository to hold in sync. uv is intentionally not used inside the
+# The container is the project's pinned, reproducible runtime environment and the official
+# way to run the pipeline. The loose dependencies declared in envs/pyproject.toml are
+# resolved fresh at build time, and the resulting image (by digest) is the lock -- there is
+# no lockfile in the repository to hold in sync. uv is intentionally not used inside the
 # image; it stays an outside-the-container convenience for running locally while debugging
 # (see the README).
+#
+# The image holds only the environment, not the code: the code is supplied at run time
+# (checked out or mounted), so a single image serves any revision of the code.
 #
 # NeuroDebian trixie (Debian 13) is the base layer: it provides Python 3.13 and a recent
 # git-annex-standalone, which DataLad requires for the annex-backed `derivatives` dataset
@@ -38,8 +41,5 @@ WORKDIR /opt/qualifying-aind-content-ids
 # time with `pip freeze`.
 COPY envs/pyproject.toml ./pyproject.toml
 RUN pip install .
-
-# The processing code itself.
-COPY code/ ./code/
 
 CMD ["python", "--version"]
