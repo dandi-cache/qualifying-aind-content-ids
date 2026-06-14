@@ -56,7 +56,7 @@ jobs:
           WORKSPACE: ${{ github.workspace }}
           LIMIT: ${{ github.event.inputs.limit || '2000' }}
           GITHUB_SHA: ${{ github.sha }}
-        run: bash code/update_pipeline.sh
+        run: uv run --project envs python code/pipeline.py
 
   NotifyOnFailure:
     runs-on: ubuntu-latest
