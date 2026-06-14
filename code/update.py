@@ -12,6 +12,46 @@ import spikeinterface.extractors
 import yaml
 
 
+def _any_electrical_series_qualifies(s3_url: str) -> bool:
+    """
+    Determine whether an NWB file qualifies, which is when at least one ElectricalSeries qualifies.
+
+    An ElectricalSeries qualifies when it is under the acquisition submodule, has unique channel
+    locations, a rate above 10kHz, and a duration longer than 120 seconds.
+    """
+    electrical_series_paths = spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
+        file_path=s3_url, stream_mode="remfile"
+    )
+    for electrical_series_path in electrical_series_paths:
+        if not electrical_series_path.startswith("acquisition/"):
+            continue
+
+        extractor = spikeinterface.extractors.NwbRecordingExtractor(
+            file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
+        )
+
+        try:
+            channel_locations = extractor.get_channel_locations()
+        except Exception as exception:
+            if "no channel locations" in str(exception).lower():
+                continue
+            raise
+
+        unique_locations = set(tuple(loc) for loc in channel_locations)
+        if len(unique_locations) != extractor.get_num_channels():
+            continue
+
+        if extractor.get_sampling_frequency() <= 10_000:
+            continue
+
+        if extractor.get_total_duration() <= 120:
+            continue
+
+        return True
+
+    return False
+
+
 def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     submodule_dir = base_directory / "sourcedata" / "content-id-to-nwb-files" / "derivatives"
     submodule_file_path = submodule_dir / "content_id_to_nwb_files.yaml"
@@ -106,31 +146,8 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             error_ids.add(content_id)
             continue
 
-        # Require channel locations to exist and be unique
-        si_failure = False
         try:
-            electrical_series_paths = (
-                spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
-                    file_path=s3_url, stream_mode="remfile"
-                )
-            )
-            for electrical_series_path in electrical_series_paths:
-                extractor = spikeinterface.extractors.NwbRecordingExtractor(
-                    file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
-                )
-
-                try:
-                    channel_locations = extractor.get_channel_locations()
-                except Exception as exception:
-                    if "no channel locations" in str(exception).lower():
-                        si_failure = True
-                        continue
-                    raise
-
-                unique_locations = set(tuple(loc) for loc in channel_locations)
-                if len(unique_locations) != extractor.get_num_channels():
-                    si_failure = True
-                    continue
+            qualifies = _any_electrical_series_qualifies(s3_url=s3_url)
         except Exception as exception:
             with file_open_errors_log_file_path.open(mode="a") as file_stream:
                 message = (
@@ -144,18 +161,8 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             error_ids.add(content_id)
             continue
 
-        if si_failure:
-            processed_ids.add(content_id)
-            continue
-
-        # Accept any file with an ElectricalSeries in the acquisition submodule with a rate above 10kHz
-        for neurodata_object in nwbfile.acquisition.values():
-            if not isinstance(neurodata_object, pynwb.ecephys.ElectricalSeries):
-                continue
-
-            if neurodata_object.rate is not None and neurodata_object.rate > 10_000:
-                qualifying_aind_content_ids.add(content_id)
-                continue
+        if qualifies:
+            qualifying_aind_content_ids.add(content_id)
         processed_ids.add(content_id)
 
     with error_ids_file_path.open(mode="w") as file_stream:
