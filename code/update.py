@@ -152,7 +152,6 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             error_ids.add(content_id)
             continue
 
-        # Qualify the session if at least one ElectricalSeries under acquisition qualifies
         try:
             qualifies = _nwbfile_qualifies(s3_url=s3_url)
         except Exception as exception:
