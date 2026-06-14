@@ -30,16 +30,18 @@ ENV VIRTUAL_ENV=/opt/venv \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 
-# An isolated virtual environment keeps our dependencies off the system interpreter.
+# Debian's system interpreter is externally managed (PEP 668), so install into a dedicated
+# virtual environment rather than forcing pip with --break-system-packages; this also keeps
+# our dependencies cleanly separated from the apt-managed Python packages.
 RUN python3 -m venv "${VIRTUAL_ENV}"
 ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 
-WORKDIR /opt/qualifying-aind-content-ids
-
-# Resolve the loose dependencies from pyproject.toml into a pinned environment. The image
-# (by digest) is the authoritative lock; the exact resolved versions can be read back at any
-# time with `pip freeze`.
-COPY envs/pyproject.toml ./pyproject.toml
-RUN pip install .
+# Resolve the loose dependencies from pyproject.toml into the pinned environment. pip cannot
+# read [project.dependencies] without building the project, so install the (virtual) project
+# from a throwaway build directory. The image (by digest) is the authoritative lock; the
+# exact resolved versions can be read back at any time with `pip freeze`.
+COPY envs/pyproject.toml /tmp/build/pyproject.toml
+RUN pip install /tmp/build \
+    && rm -rf /tmp/build
 
 CMD ["python", "--version"]
