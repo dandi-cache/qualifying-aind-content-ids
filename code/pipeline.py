@@ -2,12 +2,13 @@
 Drive the update while keeping generated results off the code branch.
 
   - `main`        holds only the code (this checkout).
-  - `derivatives` is a persistent DataLad dataset on its own branch. The processing
-                  command is recorded there via ``datalad run``, so every update carries
-                  full provenance (the command, the input subdataset commit, and the
-                  output diff) and the history is retained.
+  - `derivatives` is a persistent DataLad dataset on its own branch, checked out as a git
+                  worktree of this repository. The processing command is recorded there
+                  via ``datalad run``, so every update carries full provenance (the
+                  command, the input subdataset commit, and the output diff) and the
+                  history is retained.
   - `min`         is the lightweight, force-recreated publication artifact consumed by
-                  downstream users (see README.md).
+                  downstream users (see README.md), assembled on a throwaway worktree.
 
 The input `content-id-to-nwb-files` lives inside the `derivatives` dataset as a
 subdataset, so it is captured as a provenance input rather than tracked by the code.
@@ -17,7 +18,7 @@ Environment variables:
   WORKSPACE    Path to the `main` checkout that holds the code (this repository). [required]
   LIMIT        Number of sessions (content IDs) to process this run. [default: 2000]
   GITHUB_SHA   Recorded in the provenance message to link results to the code commit.
-  RUNNER_TEMP  Scratch directory for the working clones. [default: /tmp]
+  RUNNER_TEMP  Scratch directory for the worktrees. [default: /tmp]
 """
 
 import os
@@ -50,7 +51,7 @@ def _branch_exists(repo_url: str, branch: str) -> bool:
 
 def main() -> None:
     repo_url = os.environ["REPO_URL"]
-    workspace = pathlib.Path(os.environ["WORKSPACE"])
+    workspace = pathlib.Path(os.environ["WORKSPACE"])  # the `main` code checkout (a git repo)
     limit = os.environ.get("LIMIT", "2000")
     github_sha = os.environ.get("GITHUB_SHA", "unknown")
 
@@ -61,19 +62,22 @@ def main() -> None:
     subprocess.run(["git", "config", "--global", "user.name", BOT_NAME], check=True)
     subprocess.run(["git", "config", "--global", "user.email", BOT_EMAIL], check=True)
 
+    # The worktrees are administered from the code checkout's repository; clear any stale ones.
     for path in (dataset_dir, min_dir):
-        shutil.rmtree(path, ignore_errors=True)
+        subprocess.run(["git", "-C", str(workspace), "worktree", "remove", "--force", str(path)], check=False)
+    _git(workspace, "worktree", "prune")
 
-    # Reuse the persistent `derivatives` dataset branch, or bootstrap a new one.
+    # The `derivatives` dataset as a worktree of the code checkout.
     if _branch_exists(repo_url, "derivatives"):
         print("Reusing the existing 'derivatives' dataset branch.")
-        subprocess.run(
-            ["git", "clone", "--branch", "derivatives", "--single-branch", repo_url, str(dataset_dir)],
-            check=True,
-        )
+        _git(workspace, "fetch", "--no-tags", repo_url, "+refs/heads/derivatives:refs/heads/derivatives")
+        _git(workspace, "worktree", "add", str(dataset_dir), "derivatives")
+        _git(dataset_dir, "submodule", "update", "--init", SUBDATASET_PATH)
     else:
         print("Bootstrapping a new 'derivatives' DataLad dataset.")
-        datalad.create(path=str(dataset_dir), annex=False)
+        # The dataset shares no history with `main`, so start it on an orphan worktree.
+        _git(workspace, "worktree", "add", "--orphan", "-b", "derivatives", str(dataset_dir))
+        datalad.create(path=str(dataset_dir), force=True, annex=False)
         datalad.clone(dataset=str(dataset_dir), source=SUBDATASET_URL, path=str(dataset_dir / SUBDATASET_PATH))
         datalad.save(dataset=str(dataset_dir), message="Initialize derivatives dataset")
 
@@ -105,25 +109,28 @@ def main() -> None:
         message=f"Update qualifying AIND content IDs (code @ {github_sha})",
     )
 
-    _git(dataset_dir, "push", "origin", "HEAD:derivatives")
+    _git(dataset_dir, "push", repo_url, "HEAD:derivatives")
 
-    # Publish the consumer-facing minified artifact to the force-recreated `min` branch.
+    # Publish the consumer-facing minified artifact to the force-recreated `min` branch,
+    # assembled on a throwaway orphan worktree.
     subprocess.run(
         [sys.executable, str(workspace / "code" / "minify.py"), "--base-directory", str(dataset_dir)],
         check=True,
     )
-
-    (min_dir / "derivatives").mkdir(parents=True)
+    _git(workspace, "worktree", "add", "--orphan", "-b", "min-publish", str(min_dir))
+    (min_dir / "derivatives").mkdir(parents=True, exist_ok=True)
     for artifact in (dataset_dir / "derivatives").glob("*.min.json.gz"):
         shutil.copy(artifact, min_dir / "derivatives" / artifact.name)
-
-    _git(min_dir, "init", "-q")
     _git(min_dir, "config", "user.name", BOT_NAME)
     _git(min_dir, "config", "user.email", BOT_EMAIL)
-    _git(min_dir, "checkout", "-q", "-b", "min")
     _git(min_dir, "add", "derivatives")
     _git(min_dir, "commit", "-q", "-m", "Publish minified qualifying AIND content IDs")
-    _git(min_dir, "push", "-f", repo_url, "min:min")
+    _git(min_dir, "push", "-f", repo_url, "min-publish:min")
+
+    # Tidy the worktrees and the temporary local branch used for publication.
+    _git(workspace, "worktree", "remove", "--force", str(dataset_dir))
+    _git(workspace, "worktree", "remove", "--force", str(min_dir))
+    subprocess.run(["git", "-C", str(workspace), "branch", "-D", "min-publish"], check=False)
 
 
 if __name__ == "__main__":
