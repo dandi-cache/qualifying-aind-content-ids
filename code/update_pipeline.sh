@@ -37,6 +37,12 @@ BOT_EMAIL="github-actions[bot]@users.noreply.github.com"
 git config --global user.name "${BOT_NAME}"
 git config --global user.email "${BOT_EMAIL}"
 
+# DataLad is declared in the `envs` project rather than installed as a standalone tool,
+# so invoke it through the same environment used for the Python processing.
+datalad() {
+  uv run --project "${WORKSPACE}/envs" datalad "$@"
+}
+
 retry() {
   # retry <max-attempts> <command...> with exponential backoff
   local max="$1"

@@ -25,8 +25,8 @@ if __name__ == "__main__":
         type=pathlib.Path,
         default=default_base_directory,
         help=(
-            "The directory containing the `derivatives` directory. Defaults to the repository root. "
-            "Point this at a separate checkout (such as the `derivatives` DataLad dataset)."
+            "The directory containing the `derivatives` directory. Primarily used in tests. "
+            "Defaults to the repository root."
         ),
     )
     args = parser.parse_args()

@@ -195,8 +195,7 @@ if __name__ == "__main__":
         default=default_base_directory,
         help=(
             "The directory containing the `sourcedata`, `derivatives`, and `logs` directories. "
-            "Defaults to the repository root. Point this at a separate checkout (such as the "
-            "`derivatives` DataLad dataset) to keep generated results off the code branch."
+            "Primarily used in tests. Defaults to the repository root."
         ),
     )
     args = parser.parse_args()
