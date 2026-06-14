@@ -66,8 +66,10 @@ This will minimize data overhead by only loading the most recent changes.
 ## Repository layout
 
 Results are kept on dedicated branches so that `main` only ever tracks code:
-- **`main`**: the code (`code/`, `envs/`, the update workflow). It is not modified by the automated update.
+- **`main`**: the code (`code/`, `envs/`, `containers/`, the workflows). It is not modified by the automated update.
 - **`derivatives`**: persistent [DataLad](https://www.datalad.org/) dataset holding the full results (`derivatives/`, `logs/`) and the `content-id-to-nwb-files` input as a subdataset.
 Each update is recorded with `datalad run`, so every commit carries the command, the exact input commit, and the output diff as reproducible provenance.
 History is retained.
 - **`min`**: the consumer-facing publication artifact: the minified, compressed JSON (`derivatives/*.min.json.gz`). It is force-recreated on every update.
+
+The pinned environment (`envs/`) and the processing code (`code/`) are also published as a container image so that runs execute from a single, persistent, fully provenanced artifact. The image layers the locked Python environment on top of a [NeuroDebian](https://neuro.debian.net/) base (which provides the `git-annex` that [DataLad](https://www.datalad.org/) relies on) and is built and pushed to `ghcr.io/dandi-cache/qualifying-aind-content-ids:latest` by the `Build and Upload Container` workflow on every change to `code/`, `envs/`, or `containers/`.
