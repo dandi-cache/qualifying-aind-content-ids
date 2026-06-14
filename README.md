@@ -45,8 +45,7 @@ curl https://raw.githubusercontent.com/dandi-cache/qualifying-aind-content-ids/r
 
 ## Repeated use
 
-If you plan on using this cache regularly, clone the lightweight `min` branch, which holds
-only the compressed result:
+If you plan on using this cache regularly, clone the lightweight `min` branch, which holds only the compressed result:
 
 ```bash
 git clone --branch min --single-branch https://github.com/dandi-cache/qualifying-aind-content-ids.git
