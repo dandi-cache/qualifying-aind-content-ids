@@ -103,7 +103,9 @@ git -C "${DS}" push "${REPO_URL}" HEAD:derivatives
 # Build and force-publish the consumer-facing minified `min` artifact from a fresh repo.
 uv run --project "${WORKSPACE}/envs" python "${WORKSPACE}/code/minify.py" --base-directory "${DS}"
 mkdir -p "${MINDIR}/derivatives"
-cp "${DS}"/derivatives/*.min.json.gz "${MINDIR}/derivatives/"
+cp "${DS}/derivatives/qualifying_aind_content_ids.min.json.gz" "${MINDIR}/derivatives/"
+cp "${DS}/derivatives/error_ids.yaml" "${MINDIR}/derivatives/"
+cp "${DS}/derivatives/processed_ids.yaml" "${MINDIR}/derivatives/"
 git -C "${MINDIR}" init -q -b min
 git -C "${MINDIR}" config user.name "${BOT_NAME}"
 git -C "${MINDIR}" config user.email "${BOT_EMAIL}"
