@@ -1,5 +1,6 @@
 import argparse
 import itertools
+import json
 import pathlib
 import traceback
 
@@ -54,14 +55,12 @@ def _any_electrical_series_qualifies(s3_url: str) -> bool:
 
 
 def _load_ids(file_path: pathlib.Path) -> set:
-    """Load a set of IDs from a YAML file, returning an empty set if the file does not exist."""
+    """Load a set of IDs from a JSONL file, returning an empty set if the file does not exist."""
     if not file_path.exists():
         return set()
 
     with file_path.open(mode="r") as file_stream:
-        yaml_content = yaml.safe_load(file_stream)
-
-    return set(yaml_content) if yaml_content is not None else set()
+        return {json.loads(line) for line in file_stream if line.strip()}
 
 
 def _run(base_directory: pathlib.Path, limit: int | None) -> None:
@@ -74,15 +73,15 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     file_open_errors_log_file_path = base_directory / "logs" / "file_open_errors.txt"
     nwb_inspector_errors_log_dir = base_directory / "logs" / "nwb_inspector_errors"
     nwb_inspector_errors_log_dir.mkdir(exist_ok=True)
-    error_ids_file_path = base_directory / "derivatives" / "error_ids.yaml"
+    error_ids_file_path = base_directory / "derivatives" / "error_ids.jsonl"
     error_ids = _load_ids(error_ids_file_path)
 
-    processed_ids_file_path = base_directory / "derivatives" / "processed_ids.yaml"
+    processed_ids_file_path = base_directory / "derivatives" / "processed_ids.jsonl"
     processed_ids = _load_ids(processed_ids_file_path)
 
     content_ids_to_process = set(content_id_to_dandiset_paths.keys()) - error_ids - processed_ids
 
-    qualifying_aind_content_ids_file_path = base_directory / "derivatives" / "qualifying_aind_content_ids.yaml"
+    qualifying_aind_content_ids_file_path = base_directory / "derivatives" / "qualifying_aind_content_ids.jsonl"
     qualifying_aind_content_ids = _load_ids(qualifying_aind_content_ids_file_path)
 
     client = dandi.dandiapi.DandiAPIClient()  # Run tokenless to ensure only public dandisets are accessed
@@ -172,11 +171,11 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
         processed_ids.add(content_id)
 
     with error_ids_file_path.open(mode="w") as file_stream:
-        yaml.safe_dump(data=sorted(list(error_ids)), stream=file_stream)
+        file_stream.writelines(f"{json.dumps(id_)}\n" for id_ in sorted(error_ids))
     with processed_ids_file_path.open(mode="w") as file_stream:
-        yaml.safe_dump(data=sorted(list(processed_ids)), stream=file_stream)
+        file_stream.writelines(f"{json.dumps(id_)}\n" for id_ in sorted(processed_ids))
     with qualifying_aind_content_ids_file_path.open(mode="w") as file_stream:
-        yaml.safe_dump(data=sorted(list(qualifying_aind_content_ids)), stream=file_stream)
+        file_stream.writelines(f"{json.dumps(id_)}\n" for id_ in sorted(qualifying_aind_content_ids))
 
 
 if __name__ == "__main__":
