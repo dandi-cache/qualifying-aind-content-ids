@@ -9,7 +9,7 @@
 #                   `datalad containers-run`, so every update carries full provenance (the
 #                   command, the input subdataset commit, the output diff, and the container
 #                   image digest) and history is retained.
-#   - `min`         is the lightweight, force-recreated publication artifact consumed by
+#   - `dist`        is the lightweight, force-recreated publication artifact consumed by
 #                   downstream users (see README.md).
 #
 # The published image is used purely as the runtime environment: the code and the dataset
@@ -40,7 +40,7 @@ BOT_EMAIL="github-actions[bot]@users.noreply.github.com"
 SUBDATASET_PATH="sourcedata/content-id-to-nwb-files"
 SUBDATASET_URL="https://github.com/dandi-cache/content-id-to-nwb-files.git"
 DS="${RUNNER_TEMP:-/tmp}/derivatives-dataset"
-MINDIR="${RUNNER_TEMP:-/tmp}/min-publish"
+DISTDIR="${RUNNER_TEMP:-/tmp}/dist-publish"
 
 # datalad (with the container extension) from the project environment.
 datalad() { uv run --project "${WORKSPACE}/envs" datalad "$@"; }
@@ -51,7 +51,7 @@ git config --global user.email "${BOT_EMAIL}"
 # The `derivatives` dataset is a standalone clone (not a git worktree): datalad writes the
 # input subdataset's config into `.git/config`, which is a file -- not a directory -- in a
 # worktree, so subdataset registration fails there.
-rm -rf "${DS}" "${MINDIR}"
+rm -rf "${DS}" "${DISTDIR}"
 
 # Reuse the persistent `derivatives` dataset branch, or bootstrap a new one.
 if git ls-remote --heads "${REPO_URL}" derivatives | grep -q refs/heads/derivatives; then
@@ -100,13 +100,13 @@ datalad containers-run -n pipeline --explicit \
 # Publish the full results to the `derivatives` branch.
 git -C "${DS}" push "${REPO_URL}" HEAD:derivatives
 
-# Build and force-publish the consumer-facing minified `min` artifact from a fresh repo.
+# Build and force-publish the consumer-facing `dist` artifact from a fresh repo.
 uv run --project "${WORKSPACE}/envs" python "${WORKSPACE}/code/minify.py" --base-directory "${DS}"
-mkdir -p "${MINDIR}/derivatives"
-cp "${DS}/derivatives/qualifying_aind_content_ids.min.json.gz" "${MINDIR}/derivatives/"
-git -C "${MINDIR}" init -q -b min
-git -C "${MINDIR}" config user.name "${BOT_NAME}"
-git -C "${MINDIR}" config user.email "${BOT_EMAIL}"
-git -C "${MINDIR}" add derivatives
-git -C "${MINDIR}" commit -q -m "Publish minified qualifying AIND content IDs"
-git -C "${MINDIR}" push -f "${REPO_URL}" min:min
+mkdir -p "${DISTDIR}/derivatives"
+cp "${DS}/derivatives/qualifying_aind_content_ids.dist.json.gz" "${DISTDIR}/derivatives/"
+git -C "${DISTDIR}" init -q -b dist
+git -C "${DISTDIR}" config user.name "${BOT_NAME}"
+git -C "${DISTDIR}" config user.email "${BOT_EMAIL}"
+git -C "${DISTDIR}" add derivatives
+git -C "${DISTDIR}" commit -q -m "Publish qualifying AIND content IDs"
+git -C "${DISTDIR}" push -f "${REPO_URL}" dist:dist

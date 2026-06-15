@@ -9,7 +9,7 @@ def _minify(file_path: pathlib.Path, /) -> None:
     with file_path.open(mode="r") as file_stream:
         file_content = [json.loads(line) for line in file_stream if line.strip()]
 
-    minified_file_path = file_path.parent / f"{file_path.stem}.min.json.gz"
+    minified_file_path = file_path.parent / f"{file_path.stem}.dist.json.gz"
     with gzip.open(filename=minified_file_path, mode="wt", encoding="utf-8") as file_stream:
         json.dump(obj=file_content, fp=file_stream)
 
