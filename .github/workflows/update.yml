@@ -50,13 +50,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y git-annex
 
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets._GITHUB_API_KEY }}" | docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
+
       - name: Run update with provenance
         env:
           REPO_URL: https://x-access-token:${{ secrets._GITHUB_API_KEY }}@github.com/${{ github.repository }}.git
           WORKSPACE: ${{ github.workspace }}
           LIMIT: ${{ github.event.inputs.limit || '2000' }}
           GITHUB_SHA: ${{ github.sha }}
-        run: uv run --project envs python code/pipeline.py
+          IMAGE: ghcr.io/dandi-cache/qualifying-aind-content-ids:latest
+        run: bash code/update_pipeline.sh
 
   NotifyOnFailure:
     runs-on: ubuntu-latest
