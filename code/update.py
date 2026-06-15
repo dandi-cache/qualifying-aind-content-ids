@@ -1,3 +1,4 @@
+import argparse
 import itertools
 import pathlib
 import traceback
@@ -12,6 +13,57 @@ import spikeinterface.extractors
 import yaml
 
 
+def _any_electrical_series_qualifies(s3_url: str) -> bool:
+    """
+    Determine whether an NWB file qualifies, which is when at least one ElectricalSeries qualifies.
+
+    An ElectricalSeries qualifies when it is under the acquisition submodule, has unique channel
+    locations, a rate above 10kHz, and a duration longer than 120 seconds.
+    """
+    electrical_series_paths = spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
+        file_path=s3_url, stream_mode="remfile"
+    )
+    for electrical_series_path in electrical_series_paths:
+        if not electrical_series_path.startswith("acquisition/"):
+            continue
+
+        extractor = spikeinterface.extractors.NwbRecordingExtractor(
+            file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
+        )
+
+        try:
+            channel_locations = extractor.get_channel_locations()
+        except Exception as exception:
+            if "no channel locations" in str(exception).lower():
+                continue
+            raise
+
+        unique_locations = set(tuple(loc) for loc in channel_locations)
+        if len(unique_locations) != extractor.get_num_channels():
+            continue
+
+        if extractor.get_sampling_frequency() <= 10_000:
+            continue
+
+        if extractor.get_total_duration() <= 120:
+            continue
+
+        return True
+
+    return False
+
+
+def _load_ids(file_path: pathlib.Path) -> set:
+    """Load a set of IDs from a YAML file, returning an empty set if the file does not exist."""
+    if not file_path.exists():
+        return set()
+
+    with file_path.open(mode="r") as file_stream:
+        yaml_content = yaml.safe_load(file_stream)
+
+    return set(yaml_content) if yaml_content is not None else set()
+
+
 def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     submodule_dir = base_directory / "sourcedata" / "content-id-to-nwb-files" / "derivatives"
     submodule_file_path = submodule_dir / "content_id_to_nwb_files.yaml"
@@ -23,21 +75,15 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     nwb_inspector_errors_log_dir = base_directory / "logs" / "nwb_inspector_errors"
     nwb_inspector_errors_log_dir.mkdir(exist_ok=True)
     error_ids_file_path = base_directory / "derivatives" / "error_ids.yaml"
-    with error_ids_file_path.open(mode="r") as file_stream:
-        yaml_content = yaml.safe_load(file_stream)
-        error_ids = set(yaml_content) if yaml_content is not None else set()
+    error_ids = _load_ids(error_ids_file_path)
 
     processed_ids_file_path = base_directory / "derivatives" / "processed_ids.yaml"
-    with processed_ids_file_path.open(mode="r") as file_stream:
-        yaml_content = yaml.safe_load(file_stream)
-        processed_ids = set(yaml_content) if yaml_content is not None else set()
+    processed_ids = _load_ids(processed_ids_file_path)
 
     content_ids_to_process = set(content_id_to_dandiset_paths.keys()) - error_ids - processed_ids
 
     qualifying_aind_content_ids_file_path = base_directory / "derivatives" / "qualifying_aind_content_ids.yaml"
-    with qualifying_aind_content_ids_file_path.open(mode="r") as file_stream:
-        yaml_content = yaml.safe_load(file_stream)
-        qualifying_aind_content_ids = set(yaml_content) if yaml_content is not None else set()
+    qualifying_aind_content_ids = _load_ids(qualifying_aind_content_ids_file_path)
 
     client = dandi.dandiapi.DandiAPIClient()  # Run tokenless to ensure only public dandisets are accessed
     dandi_config = nwbinspector.load_config("dandi")
@@ -106,31 +152,8 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             error_ids.add(content_id)
             continue
 
-        # Require channel locations to exist and be unique
-        si_failure = False
         try:
-            electrical_series_paths = (
-                spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
-                    file_path=s3_url, stream_mode="remfile"
-                )
-            )
-            for electrical_series_path in electrical_series_paths:
-                extractor = spikeinterface.extractors.NwbRecordingExtractor(
-                    file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
-                )
-
-                try:
-                    channel_locations = extractor.get_channel_locations()
-                except Exception as exception:
-                    if "no channel locations" in str(exception).lower():
-                        si_failure = True
-                        continue
-                    raise
-
-                unique_locations = set(tuple(loc) for loc in channel_locations)
-                if len(unique_locations) != extractor.get_num_channels():
-                    si_failure = True
-                    continue
+            qualifies = _any_electrical_series_qualifies(s3_url=s3_url)
         except Exception as exception:
             with file_open_errors_log_file_path.open(mode="a") as file_stream:
                 message = (
@@ -144,18 +167,8 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             error_ids.add(content_id)
             continue
 
-        if si_failure:
-            processed_ids.add(content_id)
-            continue
-
-        # Accept any file with an ElectricalSeries in the acquisition submodule with a rate above 10kHz
-        for neurodata_object in nwbfile.acquisition.values():
-            if not isinstance(neurodata_object, pynwb.ecephys.ElectricalSeries):
-                continue
-
-            if neurodata_object.rate is not None and neurodata_object.rate > 10_000:
-                qualifying_aind_content_ids.add(content_id)
-                continue
+        if qualifies:
+            qualifying_aind_content_ids.add(content_id)
         processed_ids.add(content_id)
 
     with error_ids_file_path.open(mode="w") as file_stream:
@@ -167,6 +180,24 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
 
 
 if __name__ == "__main__":
-    repo_head = pathlib.Path(__file__).parent.parent
+    default_base_directory = pathlib.Path(__file__).parent.parent
 
-    _run(repo_head, limit=3_000)
+    parser = argparse.ArgumentParser(description="Process qualifying AIND content IDs.")
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=2_000,
+        help="The number of sessions (content IDs) to process in this run.",
+    )
+    parser.add_argument(
+        "--base-directory",
+        type=pathlib.Path,
+        default=default_base_directory,
+        help=(
+            "The directory containing the `sourcedata`, `derivatives`, and `logs` directories. "
+            "Primarily used in tests. Defaults to the repository root."
+        ),
+    )
+    args = parser.parse_args()
+
+    _run(base_directory=args.base_directory, limit=args.limit)
