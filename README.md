@@ -20,7 +20,7 @@ To qualify for the DANDI Compute AIND ephys pipeline, an asset must meet the fol
 
 ## One-time use
 
-If you only plan to use this cache infrequently or from disparate locations, you can directly download the latest version of the cache as a minified and compressed JSON file:
+If you only plan to use this cache infrequently or from disparate locations, you can directly download the latest version of the cache as a compressed JSON file:
 
 ### Python API (recommended)
 
@@ -30,7 +30,7 @@ import json
 
 import requests
 
-url = "https://raw.githubusercontent.com/dandi-cache/qualifying-aind-content-ids/refs/heads/min/derivatives/qualifying_aind_content_ids.min.json.gz"
+url = "https://raw.githubusercontent.com/dandi-cache/qualifying-aind-content-ids/refs/heads/dist/derivatives/qualifying_aind_content_ids.dist.json.gz"
 response = requests.get(url)
 qualifying_aind_content_ids = json.loads(gzip.decompress(data=response.content))
 ```
@@ -38,7 +38,7 @@ qualifying_aind_content_ids = json.loads(gzip.decompress(data=response.content))
 ### Save to file
 
 ```bash
-curl https://raw.githubusercontent.com/dandi-cache/qualifying-aind-content-ids/refs/heads/min/derivatives/qualifying_aind_content_ids.min.json.gz -o qualifying_aind_content_ids.min.json.gz
+curl https://raw.githubusercontent.com/dandi-cache/qualifying-aind-content-ids/refs/heads/dist/derivatives/qualifying_aind_content_ids.dist.json.gz -o qualifying_aind_content_ids.dist.json.gz
 ```
 
 
@@ -48,7 +48,7 @@ curl https://raw.githubusercontent.com/dandi-cache/qualifying-aind-content-ids/r
 If you plan on using this cache regularly, clone this repository:
 
 ```bash
-git clone --branch min --single-branch https://github.com/dandi-cache/qualifying-aind-content-ids.git
+git clone --branch dist --single-branch https://github.com/dandi-cache/qualifying-aind-content-ids.git
 ```
 
 Then set up a CRON on your system to pull the latest version of the cache at your desired frequency.
@@ -70,7 +70,7 @@ Results are kept on dedicated branches so that `main` only ever tracks code:
 - **`derivatives`**: persistent [DataLad](https://www.datalad.org/) dataset holding the full results (`derivatives/`, `logs/`) and the `content-id-to-nwb-files` input as a subdataset.
 Each update is recorded with `datalad run`, so every commit carries the command, the exact input commit, and the output diff as reproducible provenance.
 History is retained.
-- **`min`**: the consumer-facing publication artifact: the minified, compressed JSON (`derivatives/*.min.json.gz`). It is force-recreated on every update.
+- **`dist`**: the consumer-facing publication artifact: the compressed JSON (`derivatives/*.dist.json.gz`). It is force-recreated on every update.
 
 The project's dependencies (declared in `envs/pyproject.toml`) are published as a container image that provides the runtime environment, which is the official way to run the pipeline. The image holds only the environment, not the code: the code is supplied at run time (checked out or mounted), so a single image serves any revision. The image *is* the project's pinned, reproducible environment: the loose dependencies are resolved fresh at build time, so the image (by digest) is the lock and the repository itself keeps no lockfile to hold in sync. It layers this environment on a [NeuroDebian](https://neuro.debian.net/) `trixie` base (which provides Python 3.13 and the recent `git-annex` that [DataLad](https://www.datalad.org/) relies on) and is built and pushed to `ghcr.io/dandi-cache/qualifying-aind-content-ids:latest` by the `Build and Upload Container` workflow on every change to `envs/pyproject.toml` or `containers/`.
 
