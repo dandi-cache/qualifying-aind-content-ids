@@ -71,9 +71,6 @@ jobs:
         run: bash code/update_pipeline.sh
 
   NotifyOnFailure:
-    permissions:
-      contents: read
-      packages: read
     runs-on: ubuntu-latest
     needs: [ Update ]
     if: ${{ always() && failure() }}
