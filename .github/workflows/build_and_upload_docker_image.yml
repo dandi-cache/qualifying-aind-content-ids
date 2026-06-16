@@ -1,5 +1,9 @@
 name: Build and Upload Container
 
+permissions:
+  contents: read
+  packages: read
+
 on:
   push:
     branches: [ main ]
@@ -53,6 +57,9 @@ jobs:
           cache-to: type=gha,mode=max
 
   NotifyOnFailure:
+    permissions:
+      contents: read
+      packages: read
     runs-on: ubuntu-latest
     needs: [ BuildAndPush ]
     if: ${{ always() && failure() }}
