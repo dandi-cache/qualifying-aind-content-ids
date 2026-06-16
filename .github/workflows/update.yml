@@ -1,5 +1,9 @@
 name: Update
 
+permissions:
+  contents: read
+  packages: read
+
 on:
   schedule:
     - cron: "0 6/4 * * *"
@@ -20,6 +24,10 @@ env:
 
 jobs:
   Update:
+    permissions:
+      actions: write
+      contents: read
+      packages: read
     runs-on: ubuntu-latest
 
     steps:
@@ -63,6 +71,9 @@ jobs:
         run: bash code/update_pipeline.sh
 
   NotifyOnFailure:
+    permissions:
+      contents: read
+      packages: read
     runs-on: ubuntu-latest
     needs: [ Update ]
     if: ${{ always() && failure() }}
