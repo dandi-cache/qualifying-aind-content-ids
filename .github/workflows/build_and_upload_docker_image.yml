@@ -34,7 +34,7 @@ jobs:
       # Skip authentication on pull requests: those only build the image to validate it.
       - name: Log in to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
