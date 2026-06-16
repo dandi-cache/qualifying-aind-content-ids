@@ -67,7 +67,7 @@ jobs:
     needs: [ Update ]
     if: ${{ always() && failure() }}
     steps:
-      - uses: dawidd6/action-send-mail@v3
+      - uses: dawidd6/action-send-mail@v17
         with:
           server_address: smtp.gmail.com
           server_port: 465
@@ -75,5 +75,5 @@ jobs:
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: "CI Failure: DANDI Cache: Qualifying AIND Content IDs"
           to: cody.c.baker.phd@gmail.com  # Add more with comma separation (no spaces)
-          from: dandi-cache
+          from: DANDI Cache <dandi-cache@users.noreply.github.com>
           body: "Please check the latest run of the DANDI Cache update: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
