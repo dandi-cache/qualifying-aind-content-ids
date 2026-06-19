@@ -5,9 +5,6 @@ import shutil
 
 
 def _compress(file_path: pathlib.Path, /) -> None:
-
-    # Gzip the JSONL byte-for-byte: decompressing the published `.jsonl.gz` reproduces the
-    # exact contents of the source `.jsonl` (line-delimited JSON), nothing transformed.
     compressed_file_path = file_path.parent / f"{file_path.name}.gz"
     with file_path.open(mode="rb") as source_stream:
         with gzip.open(filename=compressed_file_path, mode="wb") as compressed_stream:
