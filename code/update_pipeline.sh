@@ -37,8 +37,8 @@ GITHUB_SHA="${GITHUB_SHA:-unknown}"
 
 BOT_NAME="github-actions[bot]"
 BOT_EMAIL="github-actions[bot]@users.noreply.github.com"
-SUBDATASET_PATH="sourcedata/content-id-to-nwb-files"
-SUBDATASET_URL="https://github.com/dandi-cache/content-id-to-nwb-files.git"
+SUBDATASET_PATH="sourcedata/content-id-to-usage-dandiset-path"
+SUBDATASET_URL="https://github.com/dandi-cache/content-id-to-usage-dandiset-path.git"
 DS="${RUNNER_TEMP:-/tmp}/derivatives-dataset"
 DISTDIR="${RUNNER_TEMP:-/tmp}/dist-publish"
 
