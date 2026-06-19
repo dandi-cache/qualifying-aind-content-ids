@@ -103,7 +103,7 @@ git -C "${DS}" push "${REPO_URL}" HEAD:derivatives
 # Build and force-publish the consumer-facing `dist` artifact from a fresh repo.
 uv run --project "${WORKSPACE}/envs" python "${WORKSPACE}/code/minify.py" --base-directory "${DS}"
 mkdir -p "${DISTDIR}/derivatives"
-cp "${DS}/derivatives/qualifying_aind_content_ids.jsonl.gz" "${DISTDIR}/derivatives/"
+cp "${DS}/derivatives/qualifying_aind_content_ids.dist.json.gz" "${DISTDIR}/derivatives/"
 git -C "${DISTDIR}" init -q -b dist
 git -C "${DISTDIR}" config user.name "${BOT_NAME}"
 git -C "${DISTDIR}" config user.email "${BOT_EMAIL}"

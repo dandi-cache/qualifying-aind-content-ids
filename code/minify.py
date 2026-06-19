@@ -9,7 +9,10 @@ def _minify(file_path: pathlib.Path, /) -> None:
     with file_path.open(mode="r") as file_stream:
         file_content = [json.loads(line) for line in file_stream if line.strip()]
 
-    minified_file_path = file_path.parent / f"{file_path.name}.gz"
+    # Published as a single compressed JSON array (consumed via `json.loads(gzip.decompress(...))`),
+    # so the artifact is named `.dist.json.gz` -- not `.jsonl.gz`, which would imply that
+    # decompression yields the line-delimited JSONL source rather than one JSON document.
+    minified_file_path = file_path.parent / f"{file_path.stem}.dist.json.gz"
     with gzip.open(filename=minified_file_path, mode="wt", encoding="utf-8") as file_stream:
         json.dump(obj=file_content, fp=file_stream)
 
