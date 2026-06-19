@@ -1,23 +1,20 @@
 import argparse
 import gzip
-import json
 import pathlib
+import shutil
 
 
-def _minify(file_path: pathlib.Path, /) -> None:
-
-    with file_path.open(mode="r") as file_stream:
-        file_content = [json.loads(line) for line in file_stream if line.strip()]
-
-    minified_file_path = file_path.parent / f"{file_path.name}.gz"
-    with gzip.open(filename=minified_file_path, mode="wt", encoding="utf-8") as file_stream:
-        json.dump(obj=file_content, fp=file_stream)
+def _compress(file_path: pathlib.Path, /) -> None:
+    compressed_file_path = file_path.parent / f"{file_path.name}.gz"
+    with file_path.open(mode="rb") as source_stream:
+        with gzip.open(filename=compressed_file_path, mode="wb") as compressed_stream:
+            shutil.copyfileobj(source_stream, compressed_stream)
 
 
 if __name__ == "__main__":
     default_base_directory = pathlib.Path(__file__).parent.parent
 
-    parser = argparse.ArgumentParser(description="Minify derivative JSONL files to compressed JSON.")
+    parser = argparse.ArgumentParser(description="Compress derivative JSONL files with gzip.")
     parser.add_argument(
         "--base-directory",
         type=pathlib.Path,
@@ -32,4 +29,4 @@ if __name__ == "__main__":
     derivatives_dir = args.base_directory / "derivatives"
 
     for jsonl_file_path in derivatives_dir.glob("*.jsonl"):
-        _minify(jsonl_file_path)
+        _compress(jsonl_file_path)
