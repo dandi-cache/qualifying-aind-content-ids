@@ -64,8 +64,8 @@ def _load_ids(file_path: pathlib.Path) -> set:
 
 
 def _run(base_directory: pathlib.Path, limit: int | None) -> None:
-    submodule_dir = base_directory / "sourcedata" / "content-id-to-nwb-files" / "derivatives"
-    submodule_file_path = submodule_dir / "content_id_to_nwb_files.yaml"
+    submodule_dir = base_directory / "sourcedata" / "content-id-to-usage-dandiset-path" / "derivatives"
+    submodule_file_path = submodule_dir / "content_id_to_usage_dandiset_path.yaml"
     with submodule_file_path.open(mode="r") as file_stream:
         content_id_to_dandiset_paths = yaml.safe_load(file_stream)
 
