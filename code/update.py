@@ -63,16 +63,19 @@ def _load_ids(file_path: pathlib.Path) -> set:
         return {json.loads(line) for line in file_stream if line.strip()}
 
 
+def _log_error(log_file_path: pathlib.Path, message: str) -> None:
+    """Append a single error report to the common error log, separated by a blank line."""
+    with log_file_path.open(mode="a") as file_stream:
+        file_stream.write(f"{message}\n\n")
+
+
 def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     submodule_dir = base_directory / "sourcedata" / "content-id-to-usage-dandiset-path" / "derivatives"
     submodule_file_path = submodule_dir / "content_id_to_usage_dandiset_path.yaml"
     with submodule_file_path.open(mode="r") as file_stream:
         content_id_to_dandiset_path = yaml.safe_load(file_stream)
 
-    dandi_api_errors_log_file_path = base_directory / "logs" / "dandi_api_errors.txt"
-    file_open_errors_log_file_path = base_directory / "logs" / "file_open_errors.txt"
-    nwb_inspector_errors_log_dir = base_directory / "logs" / "nwb_inspector_errors"
-    nwb_inspector_errors_log_dir.mkdir(exist_ok=True)
+    errors_log_file_path = base_directory / "logs" / "errors.txt"
     error_ids_file_path = base_directory / "derivatives" / "error_ids.jsonl"
     error_ids = _load_ids(error_ids_file_path)
 
@@ -87,28 +90,16 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     client = dandi.dandiapi.DandiAPIClient()  # Run tokenless to ensure only public dandisets are accessed
     dandi_config = nwbinspector.load_config("dandi")
     for content_id in itertools.islice(content_ids_to_process, limit):
-        dandiset_id, first_path = next(iter(content_id_to_dandiset_path[content_id].items()))
-
+        # Defaults so the catch-all handler can report context even if the very first step fails.
+        dandiset_id = first_path = s3_url = None
         try:
+            dandiset_id, first_path = next(iter(content_id_to_dandiset_path[content_id].items()))
+
             dandiset = client.get_dandiset(dandiset_id=dandiset_id)
             asset = dandiset.get_asset_by_path(path=first_path)
             s3_url = asset.get_content_url(follow_redirects=1, strip_query=True)
-        except Exception as exception:
-            with dandi_api_errors_log_file_path.open(mode="a") as file_stream:
-                message = (
-                    f"Error retrieving information about file at path {first_path} in dandiset ID {dandiset_id} "
-                    f"with `{content_id=}`!\n\n"
-                    f"{type(exception)}:{str(exception)}\n\n"
-                    f"{traceback.format_exc()}"
-                )
-                file_stream.write(message)
 
-            error_ids.add(content_id)
-            continue
-
-        try:
-            suffixes = pathlib.Path(first_path).suffixes
-            if ".zarr" in suffixes:
+            if ".zarr" in pathlib.Path(first_path).suffixes:
                 io = hdmf_zarr.NWBZarrIO(s3_url, mode="r")
                 nwbfile = io.read()
             else:
@@ -116,52 +107,38 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
                 h5py_file = h5py.File(name=rem_file, mode="r")
                 io = pynwb.NWBHDF5IO(file=h5py_file)
                 nwbfile = io.read()
-        except Exception as exception:
-            with file_open_errors_log_file_path.open(mode="a") as file_stream:
-                message = (
-                    f"Error opening file at path {first_path} in dandiset ID {dandiset_id} from URL {s3_url} "
-                    f"with `{content_id=}`!\n\n"
-                    f"{type(exception)}:{str(exception)}\n\n"
-                    f"{traceback.format_exc()}"
+
+            inspector_messages = list(
+                nwbinspector.inspect_nwbfile_object(
+                    nwbfile_object=nwbfile,
+                    config=dandi_config,
+                    importance_threshold=nwbinspector.Importance.CRITICAL,
                 )
-                file_stream.write(message)
-
-            error_ids.add(content_id)
-            continue
-
-        inspector_messages = list(
-            nwbinspector.inspect_nwbfile_object(
-                nwbfile_object=nwbfile,
-                config=dandi_config,
-                importance_threshold=nwbinspector.Importance.CRITICAL,
             )
-        )
-        if inspector_messages:
-            nwb_inspector_errors_log_file_path = nwb_inspector_errors_log_dir / f"{content_id}.txt"
-            with nwb_inspector_errors_log_file_path.open(mode="w") as file_stream:
-                message = (
-                    f"NWB Inspector found CRITICAL issues in file at path {first_path} "
-                    f"in dandiset ID {dandiset_id} with `{content_id=}`!\n\n"
+            if inspector_messages:
+                joined_messages = "\n\n".join(str(inspector_message) for inspector_message in inspector_messages)
+                _log_error(
+                    log_file_path=errors_log_file_path,
+                    message=(
+                        f"NWB Inspector found CRITICAL issues for `{content_id=}` "
+                        f"(dandiset ID {dandiset_id}, path {first_path}, URL {s3_url})!\n\n"
+                        f"{joined_messages}"
+                    ),
                 )
-                for inspector_message in inspector_messages:
-                    message += f"{inspector_message}\n\n"
-                file_stream.write(message)
+                error_ids.add(content_id)
+                continue
 
-            error_ids.add(content_id)
-            continue
-
-        try:
             qualifies = _any_electrical_series_qualifies(s3_url=s3_url)
         except Exception as exception:
-            with file_open_errors_log_file_path.open(mode="a") as file_stream:
-                message = (
-                    f"Error validating SpikeInterface metadata for file at path {first_path} "
-                    f"in dandiset ID {dandiset_id} from URL {s3_url} with `{content_id=}`!\n\n"
+            _log_error(
+                log_file_path=errors_log_file_path,
+                message=(
+                    f"Error processing `{content_id=}` "
+                    f"(dandiset ID {dandiset_id}, path {first_path}, URL {s3_url})!\n\n"
                     f"{type(exception)}:{str(exception)}\n\n"
                     f"{traceback.format_exc()}"
-                )
-                file_stream.write(message)
-
+                ),
+            )
             error_ids.add(content_id)
             continue
 
