@@ -67,7 +67,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     submodule_dir = base_directory / "sourcedata" / "content-id-to-usage-dandiset-path" / "derivatives"
     submodule_file_path = submodule_dir / "content_id_to_usage_dandiset_path.yaml"
     with submodule_file_path.open(mode="r") as file_stream:
-        content_id_to_dandiset_paths = yaml.safe_load(file_stream)
+        content_id_to_dandiset_path = yaml.safe_load(file_stream)
 
     dandi_api_errors_log_file_path = base_directory / "logs" / "dandi_api_errors.txt"
     file_open_errors_log_file_path = base_directory / "logs" / "file_open_errors.txt"
@@ -79,7 +79,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     processed_ids_file_path = base_directory / "derivatives" / "processed_ids.jsonl"
     processed_ids = _load_ids(processed_ids_file_path)
 
-    content_ids_to_process = set(content_id_to_dandiset_paths.keys()) - error_ids - processed_ids
+    content_ids_to_process = set(content_id_to_dandiset_path.keys()) - error_ids - processed_ids
 
     qualifying_aind_content_ids_file_path = base_directory / "derivatives" / "qualifying_aind_content_ids.jsonl"
     qualifying_aind_content_ids = _load_ids(qualifying_aind_content_ids_file_path)
@@ -87,8 +87,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     client = dandi.dandiapi.DandiAPIClient()  # Run tokenless to ensure only public dandisets are accessed
     dandi_config = nwbinspector.load_config("dandi")
     for content_id in itertools.islice(content_ids_to_process, limit):
-        dandiset_id, dandiset_paths = next(iter(content_id_to_dandiset_paths[content_id].items()))
-        first_path = dandiset_paths[0]  # Only test the first element and trust the rest
+        dandiset_id, first_path = next(iter(content_id_to_dandiset_path[content_id].items()))
 
         try:
             dandiset = client.get_dandiset(dandiset_id=dandiset_id)
@@ -98,7 +97,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             with dandi_api_errors_log_file_path.open(mode="a") as file_stream:
                 message = (
                     f"Error retrieving information about file at path {first_path} in dandiset ID {dandiset_id} "
-                    "with `{content_id=}`!\n\n"
+                    f"with `{content_id=}`!\n\n"
                     f"{type(exception)}:{str(exception)}\n\n"
                     f"{traceback.format_exc()}"
                 )
@@ -121,7 +120,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             with file_open_errors_log_file_path.open(mode="a") as file_stream:
                 message = (
                     f"Error opening file at path {first_path} in dandiset ID {dandiset_id} from URL {s3_url} "
-                    "with `{content_id=}`!\n\n"
+                    f"with `{content_id=}`!\n\n"
                     f"{type(exception)}:{str(exception)}\n\n"
                     f"{traceback.format_exc()}"
                 )
