@@ -75,7 +75,23 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     with submodule_file_path.open(mode="r") as file_stream:
         content_id_to_dandiset_path = yaml.safe_load(file_stream)
 
-    errors_log_file_path = base_directory / "logs" / "errors.txt"
+    logs_dir = base_directory / "logs"
+    logs_dir.mkdir(parents=True, exist_ok=True)
+    dandi_api_errors_log_file_path = logs_dir / "dandi_api_errors.txt"
+    file_open_errors_log_file_path = logs_dir / "file_open_errors.txt"
+    nwb_inspector_errors_log_file_path = logs_dir / "nwb_inspector_errors.txt"
+    spikeinterface_errors_log_file_path = logs_dir / "spikeinterface_errors.txt"
+    unexpected_errors_log_file_path = logs_dir / "unexpected_errors.txt"
+
+    # Each processing stage routes its failures to a dedicated log; anything unmapped (e.g. a
+    # failure before the first labelled stage) falls back to the catch-all `unexpected_errors.txt`.
+    stage_to_log_file_path = {
+        "retrieving asset information from the DANDI API": dandi_api_errors_log_file_path,
+        "opening the NWB file": file_open_errors_log_file_path,
+        "running the NWB Inspector": nwb_inspector_errors_log_file_path,
+        "validating SpikeInterface metadata": spikeinterface_errors_log_file_path,
+    }
+
     error_ids_file_path = base_directory / "derivatives" / "error_ids.jsonl"
     error_ids = _load_ids(error_ids_file_path)
 
@@ -92,13 +108,16 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     for content_id in itertools.islice(content_ids_to_process, limit):
         # Defaults so the catch-all handler can report context even if the very first step fails.
         dandiset_id = first_path = s3_url = None
+        stage = "loading the source path"
         try:
             dandiset_id, first_path = next(iter(content_id_to_dandiset_path[content_id].items()))
 
+            stage = "retrieving asset information from the DANDI API"
             dandiset = client.get_dandiset(dandiset_id=dandiset_id)
             asset = dandiset.get_asset_by_path(path=first_path)
             s3_url = asset.get_content_url(follow_redirects=1, strip_query=True)
 
+            stage = "opening the NWB file"
             if ".zarr" in pathlib.Path(first_path).suffixes:
                 io = hdmf_zarr.NWBZarrIO(s3_url, mode="r")
                 nwbfile = io.read()
@@ -108,6 +127,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
                 io = pynwb.NWBHDF5IO(file=h5py_file)
                 nwbfile = io.read()
 
+            stage = "running the NWB Inspector"
             inspector_messages = list(
                 nwbinspector.inspect_nwbfile_object(
                     nwbfile_object=nwbfile,
@@ -118,7 +138,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             if inspector_messages:
                 joined_messages = "\n\n".join(str(inspector_message) for inspector_message in inspector_messages)
                 _log_error(
-                    log_file_path=errors_log_file_path,
+                    log_file_path=nwb_inspector_errors_log_file_path,
                     message=(
                         f"NWB Inspector found CRITICAL issues for `{content_id=}` "
                         f"(dandiset ID {dandiset_id}, path {first_path}, URL {s3_url})!\n\n"
@@ -128,12 +148,13 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
                 error_ids.add(content_id)
                 continue
 
+            stage = "validating SpikeInterface metadata"
             qualifies = _any_electrical_series_qualifies(s3_url=s3_url)
         except Exception as exception:
             _log_error(
-                log_file_path=errors_log_file_path,
+                log_file_path=stage_to_log_file_path.get(stage, unexpected_errors_log_file_path),
                 message=(
-                    f"Error processing `{content_id=}` "
+                    f"Error while {stage} for `{content_id=}` "
                     f"(dandiset ID {dandiset_id}, path {first_path}, URL {s3_url})!\n\n"
                     f"{type(exception)}:{str(exception)}\n\n"
                     f"{traceback.format_exc()}"
