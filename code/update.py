@@ -63,8 +63,14 @@ def _load_ids(file_path: pathlib.Path) -> set:
         return {json.loads(line) for line in file_stream if line.strip()}
 
 
+def _is_nwb_file(path: str) -> bool:
+    """Whether a path points to an NWB asset, which ends in `.nwb` (HDF5) or `.nwb.zarr` (Zarr)."""
+    suffixes = pathlib.Path(path).suffixes
+    return suffixes[-2:] == [".nwb", ".zarr"] or suffixes[-1:] == [".nwb"]
+
+
 def _log_error(log_file_path: pathlib.Path, message: str) -> None:
-    """Append a single error report to the common error log, separated by a blank line."""
+    """Append a single error report to the given error log, separated by a blank line."""
     with log_file_path.open(mode="a") as file_stream:
         file_stream.write(f"{message}\n\n")
 
@@ -98,7 +104,13 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     processed_ids_file_path = base_directory / "derivatives" / "processed_ids.jsonl"
     processed_ids = _load_ids(processed_ids_file_path)
 
-    content_ids_to_process = set(content_id_to_dandiset_path.keys()) - error_ids - processed_ids
+    # Only NWB assets can qualify, so skip everything else (raw imaging, video, ephys bundles, ...)
+    # up front based on the mapped path, before spending any DANDI API or file-open work on them.
+    content_ids_to_process = {
+        content_id
+        for content_id in content_id_to_dandiset_path.keys() - error_ids - processed_ids
+        if _is_nwb_file(next(iter(content_id_to_dandiset_path[content_id].values())))
+    }
 
     qualifying_aind_content_ids_file_path = base_directory / "derivatives" / "qualifying_aind_content_ids.jsonl"
     qualifying_aind_content_ids = _load_ids(qualifying_aind_content_ids_file_path)
