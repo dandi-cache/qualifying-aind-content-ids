@@ -63,23 +63,54 @@ def _load_ids(file_path: pathlib.Path) -> set:
         return {json.loads(line) for line in file_stream if line.strip()}
 
 
+def _is_nwb_file(path: str) -> bool:
+    """Whether a path points to an NWB asset, which ends in `.nwb` (HDF5) or `.nwb.zarr` (Zarr)."""
+    suffixes = pathlib.Path(path).suffixes
+    return suffixes[-2:] == [".nwb", ".zarr"] or suffixes[-1:] == [".nwb"]
+
+
+def _log_error(log_file_path: pathlib.Path, message: str) -> None:
+    """Append a single error report to the given error log, separated by a blank line."""
+    with log_file_path.open(mode="a") as file_stream:
+        file_stream.write(f"{message}\n\n")
+
+
 def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     submodule_dir = base_directory / "sourcedata" / "content-id-to-usage-dandiset-path" / "derivatives"
     submodule_file_path = submodule_dir / "content_id_to_usage_dandiset_path.yaml"
     with submodule_file_path.open(mode="r") as file_stream:
-        content_id_to_dandiset_paths = yaml.safe_load(file_stream)
+        content_id_to_dandiset_path = yaml.safe_load(file_stream)
 
-    dandi_api_errors_log_file_path = base_directory / "logs" / "dandi_api_errors.txt"
-    file_open_errors_log_file_path = base_directory / "logs" / "file_open_errors.txt"
-    nwb_inspector_errors_log_dir = base_directory / "logs" / "nwb_inspector_errors"
-    nwb_inspector_errors_log_dir.mkdir(exist_ok=True)
+    logs_dir = base_directory / "logs"
+    logs_dir.mkdir(parents=True, exist_ok=True)
+    dandi_api_errors_log_file_path = logs_dir / "dandi_api_errors.txt"
+    file_open_errors_log_file_path = logs_dir / "file_open_errors.txt"
+    nwb_inspector_errors_log_file_path = logs_dir / "nwb_inspector_errors.txt"
+    spikeinterface_errors_log_file_path = logs_dir / "spikeinterface_errors.txt"
+    unexpected_errors_log_file_path = logs_dir / "unexpected_errors.txt"
+
+    # Each processing stage routes its failures to a dedicated log; anything unmapped (e.g. a
+    # failure before the first labelled stage) falls back to the catch-all `unexpected_errors.txt`.
+    stage_to_log_file_path = {
+        "retrieving asset information from the DANDI API": dandi_api_errors_log_file_path,
+        "opening the NWB file": file_open_errors_log_file_path,
+        "running the NWB Inspector": nwb_inspector_errors_log_file_path,
+        "validating SpikeInterface metadata": spikeinterface_errors_log_file_path,
+    }
+
     error_ids_file_path = base_directory / "derivatives" / "error_ids.jsonl"
     error_ids = _load_ids(error_ids_file_path)
 
     processed_ids_file_path = base_directory / "derivatives" / "processed_ids.jsonl"
     processed_ids = _load_ids(processed_ids_file_path)
 
-    content_ids_to_process = set(content_id_to_dandiset_paths.keys()) - error_ids - processed_ids
+    # Only NWB assets can qualify, so skip everything else (raw imaging, video, ephys bundles, ...)
+    # up front based on the mapped path, before spending any DANDI API or file-open work on them.
+    content_ids_to_process = {
+        content_id
+        for content_id in content_id_to_dandiset_path.keys() - error_ids - processed_ids
+        if _is_nwb_file(next(iter(content_id_to_dandiset_path[content_id].values())))
+    }
 
     qualifying_aind_content_ids_file_path = base_directory / "derivatives" / "qualifying_aind_content_ids.jsonl"
     qualifying_aind_content_ids = _load_ids(qualifying_aind_content_ids_file_path)
@@ -87,29 +118,19 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     client = dandi.dandiapi.DandiAPIClient()  # Run tokenless to ensure only public dandisets are accessed
     dandi_config = nwbinspector.load_config("dandi")
     for content_id in itertools.islice(content_ids_to_process, limit):
-        dandiset_id, dandiset_paths = next(iter(content_id_to_dandiset_paths[content_id].items()))
-        first_path = dandiset_paths[0]  # Only test the first element and trust the rest
-
+        # Defaults so the catch-all handler can report context even if the very first step fails.
+        dandiset_id = first_path = s3_url = None
+        stage = "loading the source path"
         try:
+            dandiset_id, first_path = next(iter(content_id_to_dandiset_path[content_id].items()))
+
+            stage = "retrieving asset information from the DANDI API"
             dandiset = client.get_dandiset(dandiset_id=dandiset_id)
             asset = dandiset.get_asset_by_path(path=first_path)
             s3_url = asset.get_content_url(follow_redirects=1, strip_query=True)
-        except Exception as exception:
-            with dandi_api_errors_log_file_path.open(mode="a") as file_stream:
-                message = (
-                    f"Error retrieving information about file at path {first_path} in dandiset ID {dandiset_id} "
-                    "with `{content_id=}`!\n\n"
-                    f"{type(exception)}:{str(exception)}\n\n"
-                    f"{traceback.format_exc()}"
-                )
-                file_stream.write(message)
 
-            error_ids.add(content_id)
-            continue
-
-        try:
-            suffixes = pathlib.Path(first_path).suffixes
-            if ".zarr" in suffixes:
+            stage = "opening the NWB file"
+            if ".zarr" in pathlib.Path(first_path).suffixes:
                 io = hdmf_zarr.NWBZarrIO(s3_url, mode="r")
                 nwbfile = io.read()
             else:
@@ -117,52 +138,40 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
                 h5py_file = h5py.File(name=rem_file, mode="r")
                 io = pynwb.NWBHDF5IO(file=h5py_file)
                 nwbfile = io.read()
-        except Exception as exception:
-            with file_open_errors_log_file_path.open(mode="a") as file_stream:
-                message = (
-                    f"Error opening file at path {first_path} in dandiset ID {dandiset_id} from URL {s3_url} "
-                    "with `{content_id=}`!\n\n"
-                    f"{type(exception)}:{str(exception)}\n\n"
-                    f"{traceback.format_exc()}"
+
+            stage = "running the NWB Inspector"
+            inspector_messages = list(
+                nwbinspector.inspect_nwbfile_object(
+                    nwbfile_object=nwbfile,
+                    config=dandi_config,
+                    importance_threshold=nwbinspector.Importance.CRITICAL,
                 )
-                file_stream.write(message)
-
-            error_ids.add(content_id)
-            continue
-
-        inspector_messages = list(
-            nwbinspector.inspect_nwbfile_object(
-                nwbfile_object=nwbfile,
-                config=dandi_config,
-                importance_threshold=nwbinspector.Importance.CRITICAL,
             )
-        )
-        if inspector_messages:
-            nwb_inspector_errors_log_file_path = nwb_inspector_errors_log_dir / f"{content_id}.txt"
-            with nwb_inspector_errors_log_file_path.open(mode="w") as file_stream:
-                message = (
-                    f"NWB Inspector found CRITICAL issues in file at path {first_path} "
-                    f"in dandiset ID {dandiset_id} with `{content_id=}`!\n\n"
+            if inspector_messages:
+                joined_messages = "\n\n".join(str(inspector_message) for inspector_message in inspector_messages)
+                _log_error(
+                    log_file_path=nwb_inspector_errors_log_file_path,
+                    message=(
+                        f"NWB Inspector found CRITICAL issues for `{content_id=}` "
+                        f"(dandiset ID {dandiset_id}, path {first_path}, URL {s3_url})!\n\n"
+                        f"{joined_messages}"
+                    ),
                 )
-                for inspector_message in inspector_messages:
-                    message += f"{inspector_message}\n\n"
-                file_stream.write(message)
+                error_ids.add(content_id)
+                continue
 
-            error_ids.add(content_id)
-            continue
-
-        try:
+            stage = "validating SpikeInterface metadata"
             qualifies = _any_electrical_series_qualifies(s3_url=s3_url)
         except Exception as exception:
-            with file_open_errors_log_file_path.open(mode="a") as file_stream:
-                message = (
-                    f"Error validating SpikeInterface metadata for file at path {first_path} "
-                    f"in dandiset ID {dandiset_id} from URL {s3_url} with `{content_id=}`!\n\n"
+            _log_error(
+                log_file_path=stage_to_log_file_path.get(stage, unexpected_errors_log_file_path),
+                message=(
+                    f"Error while {stage} for `{content_id=}` "
+                    f"(dandiset ID {dandiset_id}, path {first_path}, URL {s3_url})!\n\n"
                     f"{type(exception)}:{str(exception)}\n\n"
                     f"{traceback.format_exc()}"
-                )
-                file_stream.write(message)
-
+                ),
+            )
             error_ids.add(content_id)
             continue
 
