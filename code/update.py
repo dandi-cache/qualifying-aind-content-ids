@@ -18,8 +18,10 @@ def _any_electrical_series_qualifies(s3_url: str) -> bool:
     """
     Determine whether an NWB file qualifies, which is when at least one ElectricalSeries qualifies.
 
-    An ElectricalSeries qualifies when it is under the acquisition submodule, has unique channel
-    locations, a rate above 10kHz, and a duration longer than 120 seconds.
+    An ElectricalSeries qualifies when it is under the acquisition submodule, has a unique
+    "location" property across all channels (matching the uniqueness assertion that the
+    downstream `spikeinterface.aggregate_channels` step in the pipeline enforces), a rate above
+    10kHz, and a duration longer than 120 seconds.
     """
     electrical_series_paths = spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
         file_path=s3_url, stream_mode="remfile"
@@ -32,16 +34,30 @@ def _any_electrical_series_qualifies(s3_url: str) -> bool:
             file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
         )
 
+        # Mirror exactly what the downstream pipeline (aind-ecephys-nwb) checks. The pipeline
+        # splits the recording by probe group and recombines the groups with
+        # `spikeinterface.aggregate_channels`, which asserts that the raw "location" property is
+        # unique across all aggregated channels (channelsaggregationrecording.py). We must
+        # reproduce that exact comparison: previously we used `get_channel_locations()`, which
+        # reads positions from the probe's `contact_vector` (the global ProbeGroup layout, which
+        # is unique across probes) rather than the "location" property the pipeline compares. With
+        # multiple identical probes (e.g. two "vprobe" groups) the per-probe-relative "location"
+        # values collide across probes, so the pipeline's aggregation crashes even though
+        # `get_channel_locations()` looked unique -- which is how this session slipped through.
+        #
+        # `aggregate_channels` only enforces uniqueness when a "location" property is present, so
+        # we gate on that here as well; if it is absent the pipeline would not hit the assertion.
         try:
-            channel_locations = extractor.get_channel_locations()
+            channel_locations = extractor.get_property("location")
         except Exception as exception:
             if "no channel locations" in str(exception).lower():
                 continue
             raise
 
-        unique_locations = set(tuple(loc) for loc in channel_locations)
-        if len(unique_locations) != extractor.get_num_channels():
-            continue
+        if channel_locations is not None:
+            unique_locations = set(tuple(loc) for loc in channel_locations)
+            if len(unique_locations) != extractor.get_num_channels():
+                continue
 
         if extractor.get_sampling_frequency() <= 10_000:
             continue
