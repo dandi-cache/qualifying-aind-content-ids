@@ -48,7 +48,7 @@ def _any_electrical_series_qualifies(s3_url: str) -> bool:
         # `aggregate_channels` only enforces uniqueness when a "location" property is present, so
         # we gate on that here as well; if it is absent the pipeline would not hit the assertion.
         try:
-            channel_locations = extractor.get_property("location")
+            channel_locations = extractor.get_channel_locations()
         except Exception as exception:
             if "no channel locations" in str(exception).lower():
                 continue
