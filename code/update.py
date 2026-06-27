@@ -18,11 +18,11 @@ def _nwb_file_qualifies(s3_url: str) -> bool:
     """
     Determine whether an NWB file qualifies.
 
-    The pipeline processes every ElectricalSeries under the acquisition submodule, so a single
-    non-processable series would make it fail. Each acquisition ElectricalSeries must therefore
-    survive the pipeline's split-then-aggregate step and have a duration longer than 120 seconds,
-    and at least one of them must have a sampling rate above 10kHz for the session to be worth
-    processing.
+    Only ElectricalSeries in the acquisition submodule with a sampling rate above 10kHz are
+    assessed; lower-rate series (e.g. LFP) are ignored. The pipeline processes every such series,
+    so a single non-processable one would make it fail: each must have a duration longer than 120
+    seconds and survive the pipeline's split-then-aggregate step. The file qualifies when at least
+    one acquisition ElectricalSeries exceeds 10kHz and every series that does passes those checks.
     """
     electrical_series_paths = spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
         file_path=s3_url, stream_mode="remfile"
@@ -41,6 +41,16 @@ def _nwb_file_qualifies(s3_url: str) -> bool:
             file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
         )
 
+        # Only series above the rate threshold are spike-sorted by the pipeline, so the remaining
+        # (more expensive) assessments only apply to them; filter on the cheap sampling-rate
+        # metadata first and skip everything else.
+        if extractor.get_sampling_frequency() <= 10_000:
+            continue
+        any_above_rate_threshold = True
+
+        if extractor.get_total_duration() <= 120:
+            return False
+
         # Mimic the pipeline as closely as possible. job_dispatch (aind-ephys-job-dispatch) splits
         # a recording with `recording.split_by("group")` when it has more than one channel group,
         # and nwb_ecephys (aind-ecephys-nwb) then recombines those per-group recordings with
@@ -56,12 +66,6 @@ def _nwb_file_qualifies(s3_url: str) -> bool:
                 spikeinterface.aggregate_channels(recording_groups)
             except Exception:
                 return False
-
-        if extractor.get_total_duration() <= 120:
-            return False
-
-        if extractor.get_sampling_frequency() > 10_000:
-            any_above_rate_threshold = True
 
     return any_above_rate_threshold
 
