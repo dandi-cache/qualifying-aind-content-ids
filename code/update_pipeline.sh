@@ -69,6 +69,8 @@ git -C "${DS}" config user.name "${BOT_NAME}"
 git -C "${DS}" config user.email "${BOT_EMAIL}"
 mkdir -p "${DS}/derivatives" "${DS}/logs"
 
+# Carry the study-level BIDS dataset_description.json (kept on the code branch) onto the
+# derivatives dataset so the published dataset is self-describing.
 cp "${WORKSPACE}/dataset_description.json" "${DS}/dataset_description.json"
 datalad save -d "${DS}" -m "Add BIDS study dataset_description.json" dataset_description.json || true
 
