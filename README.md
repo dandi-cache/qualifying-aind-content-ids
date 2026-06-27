@@ -10,13 +10,17 @@ To qualify for the DANDI Compute AIND ephys pipeline, an asset must meet the fol
 1. The asset must be listed within a public Dandiset.
 2. The asset must be an NWB file, either in HDF5 or Zarr format.
 3. The NWB file must be valid (openable, satisfying DANDI upload requirements).
-4. The asset must contain at least one qualifying `ElectricalSeries` data stream in the `acquisition` group.
+4. The NWB file must contain at least one `ElectricalSeries` data stream in the `acquisition` group with a `rate` greater than 10 kHz.
 
-For an `ElectricalSeries` to qualify, it must meet the following conditions:
-a. Its rate must be greater than 10 kHz.
-b. Its relative channel locations must be specified and must be unique across the `ElectricalSeries`.
+Only acquisition `ElectricalSeries` with a `rate` greater than 10 kHz are assessed further; lower-rate series (e.g. LFP) are ignored.
+The pipeline processes *every* such series, so a single non-processable series would cause it to fail.
+
+Each acquisition `ElectricalSeries` above 10 kHz must therefore meet the following conditions:
+
+a. Its total duration must be more than 2 minutes.
+
+b. It must survive the pipeline's split-then-aggregate step. When a series spans more than one channel group, the pipeline splits it by group (as `aind-ephys-job-dispatch` does) and recombines the groups with `spikeinterface.aggregate_channels` (as `aind-ecephys-nwb` does); this requires the relative channel locations to remain unique once the groups are combined. The qualification check mimics this exactly by performing the same split-and-aggregate and excluding the asset if it raises.
 - A common error with this condition involves incorrectly specified indices in the `DynamicTableRegion` for the `electrodes` of an `ElectricalSeries`.
-c. The total duration of the `ElectricalSeries` must be more than 2 minutes.
 
 
 

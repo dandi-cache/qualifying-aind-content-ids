@@ -14,44 +14,60 @@ import spikeinterface.extractors
 import yaml
 
 
-def _any_electrical_series_qualifies(s3_url: str) -> bool:
+def _nwb_file_qualifies(s3_url: str) -> bool:
     """
-    Determine whether an NWB file qualifies, which is when at least one ElectricalSeries qualifies.
+    Determine whether an NWB file qualifies.
 
-    An ElectricalSeries qualifies when it is under the acquisition submodule, has unique channel
-    locations, a rate above 10kHz, and a duration longer than 120 seconds.
+    Only ElectricalSeries in the acquisition submodule with a sampling rate above 10kHz are
+    assessed; lower-rate series (e.g. LFP) are ignored. The pipeline processes every such series,
+    so a single non-processable one would make it fail: each must have a duration longer than 120
+    seconds and survive the pipeline's split-then-aggregate step. The file qualifies when at least
+    one acquisition ElectricalSeries exceeds 10kHz and every series that does passes those checks.
     """
     electrical_series_paths = spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
         file_path=s3_url, stream_mode="remfile"
     )
-    for electrical_series_path in electrical_series_paths:
-        if not electrical_series_path.startswith("acquisition/"):
-            continue
+    acquisition_series_paths = [
+        electrical_series_path
+        for electrical_series_path in electrical_series_paths
+        if electrical_series_path.startswith("acquisition/")
+    ]
+    if not acquisition_series_paths:
+        return False
 
+    any_above_rate_threshold = False
+    for electrical_series_path in acquisition_series_paths:
         extractor = spikeinterface.extractors.NwbRecordingExtractor(
             file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
         )
 
-        try:
-            channel_locations = extractor.get_channel_locations()
-        except Exception as exception:
-            if "no channel locations" in str(exception).lower():
-                continue
-            raise
-
-        unique_locations = set(tuple(loc) for loc in channel_locations)
-        if len(unique_locations) != extractor.get_num_channels():
-            continue
-
+        # Only series above the rate threshold are spike-sorted by the pipeline, so the remaining
+        # (more expensive) assessments only apply to them; filter on the cheap sampling-rate
+        # metadata first and skip everything else.
         if extractor.get_sampling_frequency() <= 10_000:
             continue
+        any_above_rate_threshold = True
 
         if extractor.get_total_duration() <= 120:
-            continue
+            return False
 
-        return True
+        # Mimic the pipeline as closely as possible. job_dispatch (aind-ephys-job-dispatch) splits
+        # a recording with `recording.split_by("group")` when it has more than one channel group,
+        # and nwb_ecephys (aind-ecephys-nwb) then recombines those per-group recordings with
+        # `spikeinterface.aggregate_channels`. That recombination raises "Locations are not
+        # unique!" when the per-group "location" properties collide -- exactly the failure we are
+        # trying to predict (channelsaggregationrecording.py). Reproduce the same split-then-
+        # aggregate here so that any session that would crash nwb_ecephys is excluded. We catch
+        # every exception because any aggregation failure (not just the location assertion) would
+        # equally break the pipeline.
+        if len(set(extractor.get_channel_groups())) > 1:
+            recording_groups = list(extractor.split_by(property="group").values())
+            try:
+                spikeinterface.aggregate_channels(recording_groups)
+            except Exception:
+                return False
 
-    return False
+    return any_above_rate_threshold
 
 
 def _load_ids(file_path: pathlib.Path) -> set:
@@ -161,7 +177,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
                 continue
 
             stage = "validating SpikeInterface metadata"
-            qualifies = _any_electrical_series_qualifies(s3_url=s3_url)
+            qualifies = _nwb_file_qualifies(s3_url=s3_url)
         except Exception as exception:
             _log_error(
                 log_file_path=stage_to_log_file_path.get(stage, unexpected_errors_log_file_path),
