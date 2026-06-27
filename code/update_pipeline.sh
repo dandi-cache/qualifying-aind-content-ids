@@ -69,10 +69,6 @@ git -C "${DS}" config user.name "${BOT_NAME}"
 git -C "${DS}" config user.email "${BOT_EMAIL}"
 mkdir -p "${DS}/derivatives" "${DS}/logs"
 
-# Carry the BIDS study-dataset descriptor onto the results branch. The dataset root holds the
-# `sourcedata` input subdataset alongside the `derivatives` outputs, so `DatasetType: "study"`
-# describes it accurately. Sourced from the code branch and recorded with datalad so it is
-# committed to the `derivatives` branch (and reused by the `dist` artifact below).
 cp "${WORKSPACE}/dataset_description.json" "${DS}/dataset_description.json"
 datalad save -d "${DS}" -m "Add BIDS study dataset_description.json" dataset_description.json || true
 
