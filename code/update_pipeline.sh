@@ -69,6 +69,11 @@ git -C "${DS}" config user.name "${BOT_NAME}"
 git -C "${DS}" config user.email "${BOT_EMAIL}"
 mkdir -p "${DS}/derivatives" "${DS}/logs"
 
+# Carry the study-level BIDS dataset_description.json (kept on the code branch) onto the
+# derivatives dataset so the published dataset is self-describing.
+cp "${WORKSPACE}/dataset_description.json" "${DS}/dataset_description.json"
+datalad save -d "${DS}" -m "Add BIDS study dataset_description.json" dataset_description.json || true
+
 # Advance the input subdataset to its latest commit and record the pointer.
 git -C "${DS}" submodule update --init --remote "${SUBDATASET_PATH}"
 datalad save -d "${DS}" -m "Update input subdataset to latest" "${SUBDATASET_PATH}" || true
@@ -104,9 +109,10 @@ git -C "${DS}" push "${REPO_URL}" HEAD:derivatives
 uv run --project "${WORKSPACE}/envs" python "${WORKSPACE}/code/compress.py" --base-directory "${DS}"
 mkdir -p "${DISTDIR}/derivatives"
 cp "${DS}/derivatives/qualifying_aind_content_ids.jsonl.gz" "${DISTDIR}/derivatives/"
+cp "${WORKSPACE}/dataset_description.json" "${DISTDIR}/dataset_description.json"
 git -C "${DISTDIR}" init -q -b dist
 git -C "${DISTDIR}" config user.name "${BOT_NAME}"
 git -C "${DISTDIR}" config user.email "${BOT_EMAIL}"
-git -C "${DISTDIR}" add derivatives
+git -C "${DISTDIR}" add dataset_description.json derivatives
 git -C "${DISTDIR}" commit -q -m "Publish qualifying AIND content IDs"
 git -C "${DISTDIR}" push -f "${REPO_URL}" dist:dist
