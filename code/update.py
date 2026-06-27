@@ -14,60 +14,56 @@ import spikeinterface.extractors
 import yaml
 
 
-def _any_electrical_series_qualifies(s3_url: str) -> bool:
+def _nwb_file_qualifies(s3_url: str) -> bool:
     """
-    Determine whether an NWB file qualifies, which is when at least one ElectricalSeries qualifies.
+    Determine whether an NWB file qualifies.
 
-    An ElectricalSeries qualifies when it is under the acquisition submodule, has a unique
-    "location" property across all channels (matching the uniqueness assertion that the
-    downstream `spikeinterface.aggregate_channels` step in the pipeline enforces), a rate above
-    10kHz, and a duration longer than 120 seconds.
+    The pipeline processes every ElectricalSeries under the acquisition submodule, so a single
+    non-processable series would make it fail. Each acquisition ElectricalSeries must therefore
+    survive the pipeline's split-then-aggregate step and have a duration longer than 120 seconds,
+    and at least one of them must have a sampling rate above 10kHz for the session to be worth
+    processing.
     """
     electrical_series_paths = spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
         file_path=s3_url, stream_mode="remfile"
     )
-    for electrical_series_path in electrical_series_paths:
-        if not electrical_series_path.startswith("acquisition/"):
-            continue
+    acquisition_series_paths = [
+        electrical_series_path
+        for electrical_series_path in electrical_series_paths
+        if electrical_series_path.startswith("acquisition/")
+    ]
+    if not acquisition_series_paths:
+        return False
 
+    any_above_rate_threshold = False
+    for electrical_series_path in acquisition_series_paths:
         extractor = spikeinterface.extractors.NwbRecordingExtractor(
             file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
         )
 
-        # Mirror exactly what the downstream pipeline (aind-ecephys-nwb) checks. The pipeline
-        # splits the recording by probe group and recombines the groups with
-        # `spikeinterface.aggregate_channels`, which asserts that the raw "location" property is
-        # unique across all aggregated channels (channelsaggregationrecording.py). We must
-        # reproduce that exact comparison: previously we used `get_channel_locations()`, which
-        # reads positions from the probe's `contact_vector` (the global ProbeGroup layout, which
-        # is unique across probes) rather than the "location" property the pipeline compares. With
-        # multiple identical probes (e.g. two "vprobe" groups) the per-probe-relative "location"
-        # values collide across probes, so the pipeline's aggregation crashes even though
-        # `get_channel_locations()` looked unique -- which is how this session slipped through.
-        #
-        # `aggregate_channels` only enforces uniqueness when a "location" property is present, so
-        # we gate on that here as well; if it is absent the pipeline would not hit the assertion.
-        try:
-            channel_locations = extractor.get_channel_locations()
-        except Exception as exception:
-            if "no channel locations" in str(exception).lower():
-                continue
-            raise
-
-        if channel_locations is not None:
-            unique_locations = set(tuple(loc) for loc in channel_locations)
-            if len(unique_locations) != extractor.get_num_channels():
-                continue
-
-        if extractor.get_sampling_frequency() <= 10_000:
-            continue
+        # Mimic the pipeline as closely as possible. job_dispatch (aind-ephys-job-dispatch) splits
+        # a recording with `recording.split_by("group")` when it has more than one channel group,
+        # and nwb_ecephys (aind-ecephys-nwb) then recombines those per-group recordings with
+        # `spikeinterface.aggregate_channels`. That recombination raises "Locations are not
+        # unique!" when the per-group "location" properties collide -- exactly the failure we are
+        # trying to predict (channelsaggregationrecording.py). Reproduce the same split-then-
+        # aggregate here so that any session that would crash nwb_ecephys is excluded. We catch
+        # every exception because any aggregation failure (not just the location assertion) would
+        # equally break the pipeline.
+        if len(set(extractor.get_channel_groups())) > 1:
+            recording_groups = list(extractor.split_by(property="group").values())
+            try:
+                spikeinterface.aggregate_channels(recording_groups)
+            except Exception:
+                return False
 
         if extractor.get_total_duration() <= 120:
-            continue
+            return False
 
-        return True
+        if extractor.get_sampling_frequency() > 10_000:
+            any_above_rate_threshold = True
 
-    return False
+    return any_above_rate_threshold
 
 
 def _load_ids(file_path: pathlib.Path) -> set:
@@ -177,7 +173,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
                 continue
 
             stage = "validating SpikeInterface metadata"
-            qualifies = _any_electrical_series_qualifies(s3_url=s3_url)
+            qualifies = _nwb_file_qualifies(s3_url=s3_url)
         except Exception as exception:
             _log_error(
                 log_file_path=stage_to_log_file_path.get(stage, unexpected_errors_log_file_path),
