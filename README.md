@@ -1,20 +1,22 @@
 # DANDI Cache: Qualifying AIND Content IDs
 
-A flat subset of `content-id-to-nwb-files` which have been identified to be qualify for the AIND ephys pipeline.
-
-Updated frequently.
-
-Primarily for use by developers.
+A flat subset of `content-id-to-nwb-files` that has been identified to qualify for the AIND ephys pipeline.
 
 
 
 ## AIND ephys qualification conditions
 
 To qualify for the DANDI Compute AIND ephys pipeline, an asset must meet the following conditions:
+1. The asset must be listed within a public Dandiset.
+2. The asset must be an NWB file, either in HDF5 or Zarr format.
+3. The NWB file must be valid (openable, satisfying DANDI upload requirements).
+4. The asset must contain at least one qualifying `ElectricalSeries` data stream in the `acquisition` group.
 
-1) The asset must be listed within a public Dandiset.
-2) The asset must be an NWB file, either in HDF5 or Zarr format.
-3) The asset must contain at least one `ElectricalSeries` data stream in the acquisition group with a rate greater than 10 kHz.
+For an `ElectricalSeries` to qualify, it must meet the following conditions:
+a. Its rate must be greater than 10 kHz.
+b. Its relative channel locations must be specified and must be unique across the `ElectricalSeries`.
+- A common error with this condition involves incorrectly specified indices in the `DynamicTableRegion` for the `electrodes` of an `ElectricalSeries`.
+c. The total duration of the `ElectricalSeries` must be more than 2 minutes.
 
 
 
