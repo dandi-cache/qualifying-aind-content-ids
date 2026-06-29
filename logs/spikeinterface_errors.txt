@@ -1,0 +1,28 @@
+Error while validating SpikeInterface metadata for `content_id='4c5338f4-828d-4eac-a909-13b52dd834c7'` (dandiset ID 000687, path sub-swil13/sub-swil13_ses-20220714T171703_ecephys.nwb, URL https://dandiarchive.s3.amazonaws.com/blobs/4c5/338/4c5338f4-828d-4eac-a909-13b52dd834c7)!
+
+<class 'OSError'>:Can't synchronously read data (filter returned failure during read)
+
+Traceback (most recent call last):
+  File "/code/update.py", line 180, in _run
+    qualifies = _nwb_file_qualifies(s3_url=s3_url)
+  File "/code/update.py", line 40, in _nwb_file_qualifies
+    extractor = spikeinterface.extractors.NwbRecordingExtractor(
+        file_path=s3_url, stream_mode="remfile", electrical_series_path=electrical_series_path
+    )
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/extractors/nwbextractors.py", line 566, in __init__
+    ) = self._fetch_recording_segment_info_backend(file, cache, load_time_vector, samples_for_rate_estimation)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/extractors/nwbextractors.py", line 740, in _fetch_recording_segment_info_backend
+    timestamps = electrical_series["timestamps"][:]
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "/opt/venv/lib/python3.13/site-packages/h5py/_hl/dataset.py", line 872, in __getitem__
+    return self._fast_reader.read(args)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "h5py/_selector.pyx", line 393, in h5py._selector.Reader.read
+OSError: Can't synchronously read data (filter returned failure during read)
+
+
