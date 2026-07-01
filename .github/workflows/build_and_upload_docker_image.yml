@@ -30,7 +30,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -61,7 +61,7 @@ jobs:
     needs: [ BuildAndPush ]
     if: ${{ always() && failure() }}
     steps:
-      - uses: dawidd6/action-send-mail@v17
+      - uses: dawidd6/action-send-mail@v18
         with:
           server_address: smtp.gmail.com
           server_port: 465
