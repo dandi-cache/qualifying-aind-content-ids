@@ -15,6 +15,11 @@
 # and its provenance.
 FROM neurodebian:trixie
 
+# The `source` label is what GitHub Container Registry uses to associate the published
+# image with this repository.
+LABEL org.opencontainers.image.source="https://github.com/dandi-cache/qualifying-aind-content-ids"
+LABEL org.opencontainers.image.description="Pinned runtime environment for qualifying AIND ephys content IDs on the DANDI Cache."
+
 # git-annex (for DataLad / annex provenance), Python, and the basics for cloning and TLS.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
