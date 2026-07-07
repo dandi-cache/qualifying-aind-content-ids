@@ -58,6 +58,12 @@ If you plan on using this cache regularly, clone this repository:
 git clone --branch dist --single-branch https://github.com/dandi-cache/qualifying-aind-content-ids.git
 ```
 
+Or, if you prefer [DataLad](https://www.datalad.org/):
+
+```bash
+datalad clone https://github.com/dandi-cache/qualifying-aind-content-ids.git --branch derivatives
+```
+
 Then set up a CRON on your system to pull the latest version of the cache at your desired frequency.
 
 For example, through `crontab -e`, add:
