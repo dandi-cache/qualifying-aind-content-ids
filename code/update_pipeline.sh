@@ -57,7 +57,6 @@ rm -rf "${DS}" "${DISTDIR}"
 if git ls-remote --heads "${REPO_URL}" derivatives | grep -q refs/heads/derivatives; then
   echo "Reusing the existing 'derivatives' dataset branch."
   git clone --branch derivatives --single-branch "${REPO_URL}" "${DS}"
-  git -C "${DS}" submodule update --init "${SUBDATASET_PATH}"
 else
   echo "Bootstrapping a new 'derivatives' DataLad dataset."
   datalad create --no-annex "${DS}"
@@ -74,9 +73,14 @@ mkdir -p "${DS}/derivatives" "${DS}/logs"
 cp "${WORKSPACE}/dataset_description.json" "${DS}/dataset_description.json"
 datalad save -d "${DS}" -m "Add BIDS study dataset_description.json" dataset_description.json || true
 
-# Advance the input subdataset to its latest commit and record the pointer.
+# Advance the input subdataset to the tip of upstream's `derivatives` branch (where the
+# input data is published) and record the pointer. The tracking branch is explicit, and the
+# submodule is only ever initialized with `--remote` so the previously recorded commit is
+# never fetched: upstream rewrites its history, so that commit may no longer exist on the
+# remote and fetching it fails with "not our ref".
+git -C "${DS}" submodule set-branch --branch derivatives -- "${SUBDATASET_PATH}"
 git -C "${DS}" submodule update --init --remote "${SUBDATASET_PATH}"
-datalad save -d "${DS}" -m "Update input subdataset to latest" "${SUBDATASET_PATH}" || true
+datalad save -d "${DS}" -m "Update input subdataset to latest" "${SUBDATASET_PATH}" .gitmodules || true
 
 cd "${DS}"
 
