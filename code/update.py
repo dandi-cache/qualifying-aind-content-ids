@@ -11,7 +11,6 @@ import nwbinspector
 import pynwb
 import remfile
 import spikeinterface.extractors
-import yaml
 
 
 def _nwb_file_qualifies(s3_url: str) -> bool:
@@ -93,9 +92,12 @@ def _log_error(log_file_path: pathlib.Path, message: str) -> None:
 
 def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     submodule_dir = base_directory / "sourcedata" / "content-id-to-usage-dandiset-path" / "derivatives"
-    submodule_file_path = submodule_dir / "content_id_to_usage_dandiset_path.yaml"
+    submodule_file_path = submodule_dir / "content_id_to_usage_dandiset_path.jsonl"
+    content_id_to_dandiset_path = {}
     with submodule_file_path.open(mode="r") as file_stream:
-        content_id_to_dandiset_path = yaml.safe_load(file_stream)
+        for line in file_stream:
+            if line.strip():
+                content_id_to_dandiset_path.update(json.loads(line))
 
     logs_dir = base_directory / "logs"
     logs_dir.mkdir(parents=True, exist_ok=True)
