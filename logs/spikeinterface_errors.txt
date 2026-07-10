@@ -180,3 +180,52 @@ Traceback (most recent call last):
 requests.exceptions.ConnectionError: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
 
 
+Error while validating SpikeInterface metadata for `content_id='a5085a1c-6b7f-4a6c-bb1a-476fb00bd6d7'` (dandiset ID 000628, path sub-Ye/sub-Ye_ses-20200731T151345_behavior.nwb, URL https://dandiarchive.s3.amazonaws.com/blobs/a50/85a/a5085a1c-6b7f-4a6c-bb1a-476fb00bd6d7)!
+
+<class 'RuntimeError'>:Unable to get group info (bad symbol table node signature)
+
+Traceback (most recent call last):
+  File "/code/update.py", line 182, in _run
+    qualifies = _nwb_file_qualifies(s3_url=s3_url)
+  File "/code/update.py", line 26, in _nwb_file_qualifies
+    electrical_series_paths = spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
+        file_path=s3_url, stream_mode="remfile"
+    )
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/extractors/nwbextractors.py", line 925, in fetch_available_electrical_series_paths
+    electrical_series_paths = _find_neurodata_type_from_backend(
+        file_handle,
+        neurodata_type="ElectricalSeries",
+        backend=backend,
+    )
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/extractors/nwbextractors.py", line 342, in _find_neurodata_type_from_backend
+    _find_neurodata_type_from_backend(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        value, current_path, result, neurodata_type, backend
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )  # Recursive call for sub-groups
+    ^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/extractors/nwbextractors.py", line 342, in _find_neurodata_type_from_backend
+    _find_neurodata_type_from_backend(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        value, current_path, result, neurodata_type, backend
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )  # Recursive call for sub-groups
+    ^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/extractors/nwbextractors.py", line 336, in _find_neurodata_type_from_backend
+    for neurodata_name, value in group.items():
+                                 ~~~~~~~~~~~^^
+  File "/opt/venv/lib/python3.13/site-packages/h5py/_hl/base.py", line 435, in __iter__
+    for key in self._mapping:
+               ^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/h5py/_hl/group.py", line 596, in __iter__
+    for x in self.id.__iter__():
+             ~~~~~~~~~~~~~~~~^^
+  File "h5py/h5g.pyx", line 467, in h5py.h5g.GroupID.__iter__
+  File "h5py/h5g.pyx", line 468, in h5py.h5g.GroupID.__iter__
+  File "h5py/h5g.pyx", line 107, in h5py.h5g.GroupIter.__init__
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "h5py/h5g.pyx", line 341, in h5py.h5g.GroupID.get_num_objs
+RuntimeError: Unable to get group info (bad symbol table node signature)
+
+
