@@ -84,10 +84,36 @@ def _is_nwb_file(path: str) -> bool:
     return suffixes[-2:] == [".nwb", ".zarr"] or suffixes[-1:] == [".nwb"]
 
 
+# The `derivatives` dataset is a persistent DataLad dataset: these logs accumulate across every
+# run forever (entries are never otherwise removed), and GitHub hard-rejects any single blob over
+# 100 MB. Keep each log file comfortably under that limit by dropping the oldest entries once it
+# grows past this cap.
+_MAX_LOG_FILE_SIZE_BYTES = 80_000_000
+
+
 def _log_error(log_file_path: pathlib.Path, message: str) -> None:
-    """Append a single error report to the given error log, separated by a blank line."""
+    """Append a single error report to the given error log, separated by a blank line.
+
+    If the file has grown past `_MAX_LOG_FILE_SIZE_BYTES`, the oldest entries are dropped first so
+    the file never approaches GitHub's 100 MB per-file limit.
+    """
     with log_file_path.open(mode="a") as file_stream:
         file_stream.write(f"{message}\n\n")
+
+    if log_file_path.stat().st_size <= _MAX_LOG_FILE_SIZE_BYTES:
+        return
+
+    with log_file_path.open(mode="rb") as file_stream:
+        file_stream.seek(-_MAX_LOG_FILE_SIZE_BYTES, 2)
+        tail = file_stream.read()
+
+    # Realign to the start of the next whole entry so no partial entry is kept.
+    next_entry_offset = tail.find(b"\n\n")
+    if next_entry_offset != -1:
+        tail = tail[next_entry_offset + 2 :]
+
+    with log_file_path.open(mode="wb") as file_stream:
+        file_stream.write(tail)
 
 
 def _run(base_directory: pathlib.Path, limit: int | None) -> None:
