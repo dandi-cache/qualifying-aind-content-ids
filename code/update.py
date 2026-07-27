@@ -7,6 +7,7 @@ import traceback
 import dandi.dandiapi
 import h5py
 import hdmf_zarr
+import numpy
 import nwbinspector
 import pynwb
 import remfile
@@ -20,8 +21,9 @@ def _nwb_file_qualifies(s3_url: str) -> bool:
     Only ElectricalSeries in the acquisition submodule with a sampling rate above 10kHz are
     assessed; lower-rate series (e.g. LFP) are ignored. The pipeline processes every such series,
     so a single non-processable one would make it fail: each must have a duration longer than 120
-    seconds and survive the pipeline's split-then-aggregate step. The file qualifies when at least
-    one acquisition ElectricalSeries exceeds 10kHz and every series that does passes those checks.
+    seconds, have no NaN channel locations, and survive the pipeline's split-then-aggregate step.
+    The file qualifies when at least one acquisition ElectricalSeries exceeds 10kHz and every
+    series that does passes those checks.
     """
     electrical_series_paths = spikeinterface.extractors.NwbRecordingExtractor.fetch_available_electrical_series_paths(
         file_path=s3_url, stream_mode="remfile"
@@ -48,6 +50,11 @@ def _nwb_file_qualifies(s3_url: str) -> bool:
         any_above_rate_threshold = True
 
         if extractor.get_total_duration() <= 120:
+            return False
+
+        # A NaN channel location breaks the pipeline's downstream distance/geometry computations
+        # just as surely as the aggregation failure below, so exclude it the same way.
+        if numpy.isnan(extractor.get_channel_locations()).any():
             return False
 
         # Mimic the pipeline as closely as possible. job_dispatch (aind-ephys-job-dispatch) splits
