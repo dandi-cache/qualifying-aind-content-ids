@@ -9,7 +9,8 @@ A flat subset of `content-id-to-nwb-files` that has been identified to qualify f
 To qualify for the DANDI Compute AIND ephys pipeline, an asset must meet the following conditions:
 1. The asset must be listed within a public Dandiset.
 2. The asset must be an NWB file, either in HDF5 or Zarr format.
-3. The NWB file must be valid (openable, satisfying DANDI upload requirements).
+3. The NWB file must be valid (openable, satisfying DANDI upload requirements), as determined by the
+   [`content-id-to-valid-nwb-file`](https://github.com/dandi-cache/content-id-to-valid-nwb-file) cache.
 4. The NWB file must contain at least one `ElectricalSeries` data stream in the `acquisition` group with a `rate` greater than 10 kHz.
 
 Only acquisition `ElectricalSeries` with a `rate` greater than 10 kHz are assessed further; lower-rate series (e.g. LFP) are ignored.
