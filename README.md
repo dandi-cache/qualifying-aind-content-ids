@@ -19,7 +19,9 @@ Each acquisition `ElectricalSeries` above 10 kHz must therefore meet the followi
 
 a. Its total duration must be more than 2 minutes.
 
-b. It must survive the pipeline's split-then-aggregate step. When a series spans more than one channel group, the pipeline splits it by group (as `aind-ephys-job-dispatch` does) and recombines the groups with `spikeinterface.aggregate_channels` (as `aind-ecephys-nwb` does); this requires the relative channel locations to remain unique once the groups are combined. The qualification check mimics this exactly by performing the same split-and-aggregate and excluding the asset if it raises.
+b. Its channel locations must not contain `NaN` values.
+
+c. It must survive the pipeline's split-then-aggregate step. When a series spans more than one channel group, the pipeline splits it by group (as `aind-ephys-job-dispatch` does) and recombines the groups with `spikeinterface.aggregate_channels` (as `aind-ecephys-nwb` does); this requires the relative channel locations to remain unique once the groups are combined. The qualification check mimics this exactly by performing the same split-and-aggregate and excluding the asset if it raises.
 - A common error with this condition involves incorrectly specified indices in the `DynamicTableRegion` for the `electrodes` of an `ElectricalSeries`.
 
 
