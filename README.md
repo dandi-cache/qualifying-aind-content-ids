@@ -1,6 +1,6 @@
 # DANDI Cache: Qualifying AIND Content IDs
 
-A flat subset of `content-id-to-nwb-files` that has been identified to qualify for the AIND ephys pipeline.
+A flat subset of `content-id-to-valid-nwb-file` that has been identified to qualify for the AIND ephys pipeline.
 
 
 
