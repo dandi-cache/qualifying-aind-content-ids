@@ -39,6 +39,8 @@ BOT_NAME="github-actions[bot]"
 BOT_EMAIL="github-actions[bot]@users.noreply.github.com"
 SUBDATASET_PATH="sourcedata/content-id-to-usage-dandiset-path"
 SUBDATASET_URL="https://github.com/dandi-cache/content-id-to-usage-dandiset-path.git"
+VALID_NWB_SUBDATASET_PATH="sourcedata/content-id-to-valid-nwb-file"
+VALID_NWB_SUBDATASET_URL="https://github.com/dandi-cache/content-id-to-valid-nwb-file.git"
 DS="${RUNNER_TEMP:-/tmp}/derivatives-dataset"
 DISTDIR="${RUNNER_TEMP:-/tmp}/dist-publish"
 
@@ -61,6 +63,7 @@ else
   echo "Bootstrapping a new 'derivatives' DataLad dataset."
   datalad create --no-annex "${DS}"
   datalad clone -d "${DS}" "${SUBDATASET_URL}" "${DS}/${SUBDATASET_PATH}"
+  datalad clone -d "${DS}" "${VALID_NWB_SUBDATASET_URL}" "${DS}/${VALID_NWB_SUBDATASET_PATH}"
   datalad save -d "${DS}" -m "Initialize derivatives dataset"
 fi
 
@@ -73,14 +76,22 @@ mkdir -p "${DS}/derivatives" "${DS}/logs"
 cp "${WORKSPACE}/dataset_description.json" "${DS}/dataset_description.json"
 datalad save -d "${DS}" -m "Add BIDS study dataset_description.json" dataset_description.json || true
 
-# Advance the input subdataset to the tip of upstream's `derivatives` branch (where the
+# A persistent `derivatives` dataset created before this input was added won't have it
+# registered as a submodule yet; add it in that case rather than trying to update it.
+if ! git -C "${DS}" config -f .gitmodules --get "submodule.${VALID_NWB_SUBDATASET_PATH}.url" > /dev/null 2>&1; then
+  datalad clone -d "${DS}" "${VALID_NWB_SUBDATASET_URL}" "${DS}/${VALID_NWB_SUBDATASET_PATH}"
+fi
+
+# Advance the input subdatasets to the tip of upstream's `derivatives` branch (where the
 # input data is published) and record the pointer. The tracking branch is explicit, and the
 # submodule is only ever initialized with `--remote` so the previously recorded commit is
 # never fetched: upstream rewrites its history, so that commit may no longer exist on the
 # remote and fetching it fails with "not our ref".
 git -C "${DS}" submodule set-branch --branch derivatives -- "${SUBDATASET_PATH}"
 git -C "${DS}" submodule update --init --remote "${SUBDATASET_PATH}"
-datalad save -d "${DS}" -m "Update input subdataset to latest" "${SUBDATASET_PATH}" .gitmodules || true
+git -C "${DS}" submodule set-branch --branch derivatives -- "${VALID_NWB_SUBDATASET_PATH}"
+git -C "${DS}" submodule update --init --remote "${VALID_NWB_SUBDATASET_PATH}"
+datalad save -d "${DS}" -m "Update input subdatasets to latest" "${SUBDATASET_PATH}" "${VALID_NWB_SUBDATASET_PATH}" .gitmodules || true
 
 cd "${DS}"
 
@@ -101,6 +112,7 @@ datalad save -m "Pin runtime container image to ${DIGEST}" .datalad
 # prior state (input) and output of this run.
 datalad containers-run -n pipeline --explicit \
   --input "${SUBDATASET_PATH}" \
+  --input "${VALID_NWB_SUBDATASET_PATH}" \
   --output derivatives \
   --output logs \
   -m "Update qualifying AIND content IDs (code @ ${GITHUB_SHA}; image ${DIGEST})" \

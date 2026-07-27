@@ -5,12 +5,7 @@ import pathlib
 import traceback
 
 import dandi.dandiapi
-import h5py
-import hdmf_zarr
 import numpy
-import nwbinspector
-import pynwb
-import remfile
 import spikeinterface.extractors
 
 
@@ -132,11 +127,20 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             if line.strip():
                 content_id_to_dandiset_path.update(json.loads(line))
 
+    # The `content-id-to-valid-nwb-file` cache already confirms each NWB file opens successfully
+    # and passes the NWB Inspector at the CRITICAL threshold, so this pipeline can trust that
+    # result instead of repeating the file-open/inspection work itself.
+    valid_nwb_submodule_dir = base_directory / "sourcedata" / "content-id-to-valid-nwb-file" / "derivatives"
+    valid_nwb_file_path = valid_nwb_submodule_dir / "content_id_to_valid_nwb_file.jsonl"
+    content_id_to_valid_nwb_file = {}
+    with valid_nwb_file_path.open(mode="r") as file_stream:
+        for line in file_stream:
+            if line.strip():
+                content_id_to_valid_nwb_file.update(json.loads(line))
+
     logs_dir = base_directory / "logs"
     logs_dir.mkdir(parents=True, exist_ok=True)
     dandi_api_errors_log_file_path = logs_dir / "dandi_api_errors.txt"
-    file_open_errors_log_file_path = logs_dir / "file_open_errors.txt"
-    nwb_inspector_errors_log_file_path = logs_dir / "nwb_inspector_errors.txt"
     spikeinterface_errors_log_file_path = logs_dir / "spikeinterface_errors.txt"
     unexpected_errors_log_file_path = logs_dir / "unexpected_errors.txt"
 
@@ -144,8 +148,6 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     # failure before the first labelled stage) falls back to the catch-all `unexpected_errors.txt`.
     stage_to_log_file_path = {
         "retrieving asset information from the DANDI API": dandi_api_errors_log_file_path,
-        "opening the NWB file": file_open_errors_log_file_path,
-        "running the NWB Inspector": nwb_inspector_errors_log_file_path,
         "validating SpikeInterface metadata": spikeinterface_errors_log_file_path,
     }
 
@@ -155,19 +157,27 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     processed_ids_file_path = base_directory / "derivatives" / "processed_ids.jsonl"
     processed_ids = _load_ids(processed_ids_file_path)
 
-    # Only NWB assets can qualify, so skip everything else (raw imaging, video, ephys bundles, ...)
-    # up front based on the mapped path, before spending any DANDI API or file-open work on them.
+    # Content IDs the upstream cache has already flagged as not a valid NWB file are disqualified
+    # without spending any further work on them; they are not errors, just non-qualifying.
+    processed_ids |= {
+        content_id
+        for content_id in content_id_to_valid_nwb_file.keys() - error_ids - processed_ids
+        if content_id_to_valid_nwb_file[content_id] is False
+    }
+
+    # Only NWB assets that the upstream cache has confirmed are valid can qualify. Assets not yet
+    # present in that cache are left for a future run once upstream has assessed them.
     content_ids_to_process = {
         content_id
         for content_id in content_id_to_dandiset_path.keys() - error_ids - processed_ids
-        if _is_nwb_file(next(iter(content_id_to_dandiset_path[content_id].values())))
+        if content_id_to_valid_nwb_file.get(content_id) is True
+        and _is_nwb_file(next(iter(content_id_to_dandiset_path[content_id].values())))
     }
 
     qualifying_aind_content_ids_file_path = base_directory / "derivatives" / "qualifying_aind_content_ids.jsonl"
     qualifying_aind_content_ids = _load_ids(qualifying_aind_content_ids_file_path)
 
     client = dandi.dandiapi.DandiAPIClient()  # Run tokenless to ensure only public dandisets are accessed
-    dandi_config = nwbinspector.load_config("dandi")
     for content_id in itertools.islice(content_ids_to_process, limit):
         # Defaults so the catch-all handler can report context even if the very first step fails.
         dandiset_id = first_path = s3_url = None
@@ -179,37 +189,6 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             dandiset = client.get_dandiset(dandiset_id=dandiset_id)
             asset = dandiset.get_asset_by_path(path=first_path)
             s3_url = asset.get_content_url(follow_redirects=1, strip_query=True)
-
-            stage = "opening the NWB file"
-            if ".zarr" in pathlib.Path(first_path).suffixes:
-                io = hdmf_zarr.NWBZarrIO(s3_url, mode="r")
-                nwbfile = io.read()
-            else:
-                rem_file = remfile.File(url=s3_url)
-                h5py_file = h5py.File(name=rem_file, mode="r")
-                io = pynwb.NWBHDF5IO(file=h5py_file)
-                nwbfile = io.read()
-
-            stage = "running the NWB Inspector"
-            inspector_messages = list(
-                nwbinspector.inspect_nwbfile_object(
-                    nwbfile_object=nwbfile,
-                    config=dandi_config,
-                    importance_threshold=nwbinspector.Importance.CRITICAL,
-                )
-            )
-            if inspector_messages:
-                joined_messages = "\n\n".join(str(inspector_message) for inspector_message in inspector_messages)
-                _log_error(
-                    log_file_path=nwb_inspector_errors_log_file_path,
-                    message=(
-                        f"NWB Inspector found CRITICAL issues for `{content_id=}` "
-                        f"(dandiset ID {dandiset_id}, path {first_path}, URL {s3_url})!\n\n"
-                        f"{joined_messages}"
-                    ),
-                )
-                error_ids.add(content_id)
-                continue
 
             stage = "validating SpikeInterface metadata"
             qualifies = _nwb_file_qualifies(s3_url=s3_url)
