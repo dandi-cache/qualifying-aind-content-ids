@@ -80,6 +80,19 @@ def _load_ids(file_path: pathlib.Path) -> set:
         return {json.loads(line) for line in file_stream if line.strip()}
 
 
+def _load_dict(file_path: pathlib.Path) -> dict:
+    """Load a dict from a JSONL file of single-key objects, returning an empty dict if missing."""
+    result = {}
+    if not file_path.exists():
+        return result
+
+    with file_path.open(mode="r") as file_stream:
+        for line in file_stream:
+            if line.strip():
+                result.update(json.loads(line))
+    return result
+
+
 def _is_nwb_file(path: str) -> bool:
     """Whether a path points to an NWB asset, which ends in `.nwb` (HDF5) or `.nwb.zarr` (Zarr)."""
     suffixes = pathlib.Path(path).suffixes
@@ -119,24 +132,23 @@ def _log_error(log_file_path: pathlib.Path, message: str) -> None:
 
 
 def _run(base_directory: pathlib.Path, limit: int | None) -> None:
+    # The base universe of content IDs to consider: only content IDs already confirmed to
+    # qualify for the LFP pipeline are candidates for the (stricter) AIND ephys pipeline.
+    lfp_submodule_dir = base_directory / "sourcedata" / "qualifying-lfp-content-ids" / "derivatives"
+    lfp_content_ids_file_path = lfp_submodule_dir / "qualifying_lfp_content_ids.jsonl"
+    qualifying_lfp_content_ids = _load_ids(lfp_content_ids_file_path)
+
+    # Used only to resolve a content ID to the dandiset/path needed to fetch it from the DANDI API.
     submodule_dir = base_directory / "sourcedata" / "content-id-to-usage-dandiset-path" / "derivatives"
     submodule_file_path = submodule_dir / "content_id_to_usage_dandiset_path.jsonl"
-    content_id_to_dandiset_path = {}
-    with submodule_file_path.open(mode="r") as file_stream:
-        for line in file_stream:
-            if line.strip():
-                content_id_to_dandiset_path.update(json.loads(line))
+    content_id_to_dandiset_path = _load_dict(submodule_file_path)
 
     # The `content-id-to-valid-nwb-file` cache already confirms each NWB file opens successfully
     # and passes the NWB Inspector at the CRITICAL threshold, so this pipeline can trust that
     # result instead of repeating the file-open/inspection work itself.
     valid_nwb_submodule_dir = base_directory / "sourcedata" / "content-id-to-valid-nwb-file" / "derivatives"
     valid_nwb_file_path = valid_nwb_submodule_dir / "content_id_to_valid_nwb_file.jsonl"
-    content_id_to_valid_nwb_file = {}
-    with valid_nwb_file_path.open(mode="r") as file_stream:
-        for line in file_stream:
-            if line.strip():
-                content_id_to_valid_nwb_file.update(json.loads(line))
+    content_id_to_valid_nwb_file = _load_dict(valid_nwb_file_path)
 
     logs_dir = base_directory / "logs"
     logs_dir.mkdir(parents=True, exist_ok=True)
@@ -151,31 +163,27 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
         "validating SpikeInterface metadata": spikeinterface_errors_log_file_path,
     }
 
-    error_ids_file_path = base_directory / "derivatives" / "error_ids.jsonl"
-    error_ids = _load_ids(error_ids_file_path)
-
-    processed_ids_file_path = base_directory / "derivatives" / "processed_ids.jsonl"
-    processed_ids = _load_ids(processed_ids_file_path)
+    # `content_id_to_qualifies` is both the record of every content ID already assessed (whether
+    # it qualifies, doesn't, or errored -- all recorded as `False` other than a confirmed
+    # qualification) and the published output.
+    qualifying_aind_content_ids_file_path = base_directory / "derivatives" / "qualifying_aind_content_ids.jsonl"
+    content_id_to_qualifies = _load_dict(qualifying_aind_content_ids_file_path)
 
     # Content IDs the upstream cache has already flagged as not a valid NWB file are disqualified
     # without spending any further work on them; they are not errors, just non-qualifying.
-    processed_ids |= {
-        content_id
-        for content_id in content_id_to_valid_nwb_file.keys() - error_ids - processed_ids
-        if content_id_to_valid_nwb_file[content_id] is False
-    }
+    for content_id in qualifying_lfp_content_ids - content_id_to_qualifies.keys():
+        if content_id_to_valid_nwb_file.get(content_id) is False:
+            content_id_to_qualifies[content_id] = False
 
     # Only NWB assets that the upstream cache has confirmed are valid can qualify. Assets not yet
     # present in that cache are left for a future run once upstream has assessed them.
     content_ids_to_process = {
         content_id
-        for content_id in content_id_to_dandiset_path.keys() - error_ids - processed_ids
-        if content_id_to_valid_nwb_file.get(content_id) is True
+        for content_id in qualifying_lfp_content_ids - content_id_to_qualifies.keys()
+        if content_id in content_id_to_dandiset_path
+        and content_id_to_valid_nwb_file.get(content_id) is True
         and _is_nwb_file(next(iter(content_id_to_dandiset_path[content_id].values())))
     }
-
-    qualifying_aind_content_ids_file_path = base_directory / "derivatives" / "qualifying_aind_content_ids.jsonl"
-    qualifying_aind_content_ids = _load_ids(qualifying_aind_content_ids_file_path)
 
     client = dandi.dandiapi.DandiAPIClient()  # Run tokenless to ensure only public dandisets are accessed
     for content_id in itertools.islice(content_ids_to_process, limit):
@@ -202,19 +210,16 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
                     f"{traceback.format_exc()}"
                 ),
             )
-            error_ids.add(content_id)
+            content_id_to_qualifies[content_id] = False
             continue
 
-        if qualifies:
-            qualifying_aind_content_ids.add(content_id)
-        processed_ids.add(content_id)
+        content_id_to_qualifies[content_id] = qualifies
 
-    with error_ids_file_path.open(mode="w") as file_stream:
-        file_stream.writelines(f"{json.dumps(id_)}\n" for id_ in sorted(error_ids))
-    with processed_ids_file_path.open(mode="w") as file_stream:
-        file_stream.writelines(f"{json.dumps(id_)}\n" for id_ in sorted(processed_ids))
     with qualifying_aind_content_ids_file_path.open(mode="w") as file_stream:
-        file_stream.writelines(f"{json.dumps(id_)}\n" for id_ in sorted(qualifying_aind_content_ids))
+        file_stream.writelines(
+            f"{json.dumps({content_id: content_id_to_qualifies[content_id]})}\n"
+            for content_id in sorted(content_id_to_qualifies)
+        )
 
 
 if __name__ == "__main__":
