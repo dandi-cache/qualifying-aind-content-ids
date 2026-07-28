@@ -1,13 +1,16 @@
 # DANDI Cache: Qualifying AIND Content IDs
 
-A flat subset of `content-id-to-valid-nwb-file` that has been identified to qualify for the AIND ephys pipeline.
+For each content ID that qualifies for the
+[`qualifying-lfp-content-ids`](https://github.com/dandi-cache/qualifying-lfp-content-ids) cache, records whether it
+also qualifies for the (stricter) AIND ephys pipeline.
 
 
 
 ## AIND ephys qualification conditions
 
 To qualify for the DANDI Compute AIND ephys pipeline, an asset must meet the following conditions:
-1. The asset must be listed within a public Dandiset.
+1. The asset must qualify for the
+   [`qualifying-lfp-content-ids`](https://github.com/dandi-cache/qualifying-lfp-content-ids) cache.
 2. The asset must be an NWB file, either in HDF5 or Zarr format.
 3. The NWB file must be valid (openable, satisfying DANDI upload requirements), as determined by the
    [`content-id-to-valid-nwb-file`](https://github.com/dandi-cache/content-id-to-valid-nwb-file) cache.
@@ -42,7 +45,11 @@ import requests
 url = "https://raw.githubusercontent.com/dandi-cache/qualifying-aind-content-ids/refs/heads/dist/derivatives/qualifying_aind_content_ids.jsonl.gz"
 response = requests.get(url)
 content = gzip.decompress(data=response.content).decode(encoding="utf-8")
-qualifying_aind_content_ids = [json.loads(line) for line in content.splitlines() if line.strip()]
+content_id_to_qualifies = {}
+for line in content.splitlines():
+    if line.strip():
+        content_id_to_qualifies.update(json.loads(line))
+qualifying_aind_content_ids = [content_id for content_id, qualifies in content_id_to_qualifies.items() if qualifies]
 ```
 
 ### Save to file
