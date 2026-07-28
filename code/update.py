@@ -165,9 +165,14 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
 
     # `content_id_to_qualifies` is both the record of every content ID already assessed (whether
     # it qualifies, doesn't, or errored -- all recorded as `False` other than a confirmed
-    # qualification) and the published output.
+    # qualification) and the published output. `error_ids` separately tracks which of those
+    # `False` entries were due to an error rather than a confirmed non-qualification, so the
+    # reason behind a given `False` can still be recovered.
     qualifying_aind_content_ids_file_path = base_directory / "derivatives" / "qualifying_aind_content_ids.jsonl"
     content_id_to_qualifies = _load_dict(qualifying_aind_content_ids_file_path)
+
+    error_ids_file_path = base_directory / "derivatives" / "error_ids.jsonl"
+    error_ids = _load_ids(error_ids_file_path)
 
     # Content IDs the upstream cache has already flagged as not a valid NWB file are disqualified
     # without spending any further work on them; they are not errors, just non-qualifying.
@@ -211,6 +216,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
                 ),
             )
             content_id_to_qualifies[content_id] = False
+            error_ids.add(content_id)
             continue
 
         content_id_to_qualifies[content_id] = qualifies
@@ -220,6 +226,8 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
             f"{json.dumps({content_id: content_id_to_qualifies[content_id]})}\n"
             for content_id in sorted(content_id_to_qualifies)
         )
+    with error_ids_file_path.open(mode="w") as file_stream:
+        file_stream.writelines(f"{json.dumps(id_)}\n" for id_ in sorted(error_ids))
 
 
 if __name__ == "__main__":
