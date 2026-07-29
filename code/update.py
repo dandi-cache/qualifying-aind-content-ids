@@ -80,6 +80,24 @@ def _load_ids(file_path: pathlib.Path) -> set:
         return {json.loads(line) for line in file_stream if line.strip()}
 
 
+def _load_qualifying_ids(file_path: pathlib.Path) -> set:
+    """Load the set of qualifying content IDs from a JSONL file of `[content_id, qualifies]` pairs.
+
+    The upstream `qualifying-lfp-content-ids` source records every content ID it assessed as a
+    `[content_id, qualifies]` pair (one per line), so only those with a `True` qualification status
+    are kept here. Returns an empty set if the file does not exist.
+    """
+    if not file_path.exists():
+        return set()
+
+    with file_path.open(mode="r") as file_stream:
+        return {
+            content_id
+            for content_id, qualifies in (json.loads(line) for line in file_stream if line.strip())
+            if qualifies
+        }
+
+
 def _load_dict(file_path: pathlib.Path) -> dict:
     """Load a dict from a JSONL file of single-key objects, returning an empty dict if missing."""
     result = {}
@@ -136,7 +154,7 @@ def _run(base_directory: pathlib.Path, limit: int | None) -> None:
     # qualify for the LFP pipeline are candidates for the (stricter) AIND ephys pipeline.
     lfp_submodule_dir = base_directory / "sourcedata" / "qualifying-lfp-content-ids" / "derivatives"
     lfp_content_ids_file_path = lfp_submodule_dir / "qualifying_lfp_content_ids.jsonl"
-    qualifying_lfp_content_ids = _load_ids(lfp_content_ids_file_path)
+    qualifying_lfp_content_ids = _load_qualifying_ids(lfp_content_ids_file_path)
 
     # Used only to resolve a content ID to the dandiset/path needed to fetch it from the DANDI API.
     submodule_dir = base_directory / "sourcedata" / "content-id-to-usage-dandiset-path" / "derivatives"
