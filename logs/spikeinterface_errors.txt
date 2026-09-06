@@ -3400,3 +3400,39 @@ Traceback (most recent call last):
 Exception: There are no channel locations
 
 
+Error while validating SpikeInterface metadata for `content_id='8c0347d0-ad35-407f-a2fa-9b7640ee40c7'` (dandiset ID 001788, path sub-BQE3/sub-BQE3_ses-250912-BQE3-day1_ecephys.nwb, URL https://dandiarchive.s3.amazonaws.com/blobs/8c0/347/8c0347d0-ad35-407f-a2fa-9b7640ee40c7)!
+
+<class 'Exception'>:There are no channel locations
+
+Traceback (most recent call last):
+  File "/code/update.py", line 225, in _run
+    qualifies = _nwb_file_qualifies(s3_url=s3_url)
+  File "/code/update.py", line 52, in _nwb_file_qualifies
+    if numpy.isnan(extractor.get_channel_locations()).any():
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/core/baserecording.py", line 837, in get_channel_locations
+    return super().get_channel_locations(channel_ids=channel_ids, axes=axes)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/core/baserecordingsnippets.py", line 364, in get_channel_locations
+    raise Exception("There are no channel locations")
+Exception: There are no channel locations
+
+
+Error while validating SpikeInterface metadata for `content_id='3430676f-956e-43a1-8f5e-df7fff437ca9'` (dandiset ID 000463, path sub-BH396/sub-BH396_ses-20221117T221038_ecephys.nwb, URL https://dandiarchive.s3.amazonaws.com/blobs/343/067/3430676f-956e-43a1-8f5e-df7fff437ca9)!
+
+<class 'Exception'>:There are no channel locations
+
+Traceback (most recent call last):
+  File "/code/update.py", line 225, in _run
+    qualifies = _nwb_file_qualifies(s3_url=s3_url)
+  File "/code/update.py", line 52, in _nwb_file_qualifies
+    if numpy.isnan(extractor.get_channel_locations()).any():
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/core/baserecording.py", line 837, in get_channel_locations
+    return super().get_channel_locations(channel_ids=channel_ids, axes=axes)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/core/baserecordingsnippets.py", line 364, in get_channel_locations
+    raise Exception("There are no channel locations")
+Exception: There are no channel locations
+
+
