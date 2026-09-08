@@ -81,21 +81,13 @@ def _load_ids(file_path: pathlib.Path) -> set:
 
 
 def _load_qualifying_ids(file_path: pathlib.Path) -> set:
-    """Load the set of qualifying content IDs from a JSONL file of `[content_id, qualifies]` pairs.
+    """Load the set of qualifying content IDs from a JSONL file of `{content_id: qualifies}` records.
 
     The upstream `qualifying-lfp-content-ids` source records every content ID it assessed as a
-    `[content_id, qualifies]` pair (one per line), so only those with a `True` qualification status
-    are kept here. Returns an empty set if the file does not exist.
+    `{content_id: qualifies}` object (one per line), so only those with a `True` qualification
+    status are kept here. Returns an empty set if the file does not exist.
     """
-    if not file_path.exists():
-        return set()
-
-    with file_path.open(mode="r") as file_stream:
-        return {
-            content_id
-            for content_id, qualifies in (json.loads(line) for line in file_stream if line.strip())
-            if qualifies
-        }
+    return {content_id for content_id, qualifies in _load_dict(file_path=file_path).items() if qualifies}
 
 
 def _load_dict(file_path: pathlib.Path) -> dict:
