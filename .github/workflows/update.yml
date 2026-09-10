@@ -55,7 +55,11 @@ jobs:
 
       - name: Install git-annex
         run: |
-          sudo apt-get update
+          # Tolerate transient failures from unrelated third-party apt repos
+          # (e.g. Google Chrome's repo intermittently serves a stale/mismatched
+          # Packages index), which would otherwise abort this step even though
+          # the Ubuntu archives we actually need succeed.
+          sudo apt-get update || true
           sudo apt-get install -y git-annex
 
       - name: Log in to GitHub Container Registry
