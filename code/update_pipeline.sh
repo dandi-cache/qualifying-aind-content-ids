@@ -49,6 +49,40 @@ DISTDIR="${RUNNER_TEMP:-/tmp}/dist-publish"
 # datalad (with the container extension) from the project environment.
 datalad() { uv run --project "${WORKSPACE}/envs" datalad "$@"; }
 
+# Push a local ref to a remote branch, retrying on transient failures.
+#
+# GitHub occasionally rejects a push with "cannot lock ref 'refs/heads/<branch>': is at <sha>
+# but expected <sha>" even though the push was applied server-side (the remote ends up at the
+# pushed commit). Treat the push as successful if the remote branch already points at the
+# commit we are pushing, and otherwise retry with backoff. A genuine non-fast-forward (the
+# branch advanced to a commit that is not ours) still fails after the retries are exhausted.
+#
+#   push_with_retry <repo-dir> <remote-branch> <local-ref> [extra git-push args...]
+push_with_retry() {
+  local repo_dir="$1" branch="$2" local_ref="$3"
+  shift 3
+  local attempts=5 attempt delay
+  local want remote_sha
+  want=$(git -C "${repo_dir}" rev-parse "${local_ref}")
+  for ((attempt = 1; attempt <= attempts; attempt++)); do
+    if git -C "${repo_dir}" push "$@" "${REPO_URL}" "${local_ref}:${branch}"; then
+      return 0
+    fi
+    remote_sha=$(git ls-remote --heads "${REPO_URL}" "${branch}" | cut -f1 || true)
+    if [ -n "${remote_sha}" ] && [ "${remote_sha}" = "${want}" ]; then
+      echo "Remote '${branch}' is already at ${want}; treating push as successful."
+      return 0
+    fi
+    if [ "${attempt}" -lt "${attempts}" ]; then
+      delay=$((2 ** attempt))
+      echo "Push of '${branch}' failed (attempt ${attempt}/${attempts}); retrying in ${delay}s..." >&2
+      sleep "${delay}"
+    fi
+  done
+  echo "Push of '${branch}' failed after ${attempts} attempts." >&2
+  return 1
+}
+
 git config --global user.name "${BOT_NAME}"
 git config --global user.email "${BOT_EMAIL}"
 
@@ -129,7 +163,7 @@ datalad containers-run -n pipeline --explicit \
   "python /code/update.py --base-directory /tmp --limit ${LIMIT}"
 
 # Publish the full results to the `derivatives` branch.
-git -C "${DS}" push "${REPO_URL}" HEAD:derivatives
+push_with_retry "${DS}" derivatives HEAD
 
 # Build and force-publish the consumer-facing `dist` artifact from a fresh repo.
 uv run --project "${WORKSPACE}/envs" python "${WORKSPACE}/code/compress.py" --base-directory "${DS}"
@@ -141,4 +175,4 @@ git -C "${DISTDIR}" config user.name "${BOT_NAME}"
 git -C "${DISTDIR}" config user.email "${BOT_EMAIL}"
 git -C "${DISTDIR}" add dataset_description.json derivatives
 git -C "${DISTDIR}" commit -q -m "Publish qualifying AIND content IDs"
-git -C "${DISTDIR}" push -f "${REPO_URL}" dist:dist
+push_with_retry "${DISTDIR}" dist dist -f
