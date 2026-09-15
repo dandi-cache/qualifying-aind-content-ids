@@ -43,11 +43,11 @@ name = "content-id-to-valid-nwb-file"
 limit = 2000
 
 # The published branches describe this repository as a BIDS study dataset. Every field below is
-# what this repository's own `dataset_description.json` declared, including the BIDS version, which
-# is a version ahead of its siblings.
+# what this repository's own `dataset_description.json` declared, less the BIDS version: it named
+# `1.11.0` because it was written later than its siblings, and the shared default is now `1.11.1`
+# for all of them, so naming one here would only be a way to fall behind them again.
 [description]
 title = "DANDI Cache: Qualifying AIND Content IDs"
-bids_version = "1.11.0"
 keywords = [
     "DANDI",
     "AIND",
