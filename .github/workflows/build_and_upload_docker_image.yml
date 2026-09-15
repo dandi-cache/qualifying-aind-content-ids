@@ -20,6 +20,11 @@ on:
       - "envs/pyproject.toml"
       - "containers/**"
       - ".github/workflows/build_and_upload_docker_image.yml"
+  repository_dispatch:
+    # Sent by dandi-cache-utils when it publishes a new base image. This image is built `FROM` that
+    # base and `FROM` resolves at build time, so without this the cache would keep whatever base it
+    # was last built on until its own Dockerfile or dependencies happened to change.
+    types: [ base-image-published ]
   workflow_dispatch:
 
 concurrency:
