@@ -1,0 +1,61 @@
+# The complete declarative description of this cache.
+#
+# One file, read by both the shared orchestration and this cache's own update code, so the two
+# cannot disagree. It replaces what used to be spread across `code/update_pipeline.sh` (three
+# subdataset URLs and paths with a bespoke variable pair each, the output file names, the entry
+# point, the batch size), the update workflow (the image reference and a second batch size),
+# `dataset_description.json`, and the constants at the top of `code/update.py`.
+
+[cache]
+name = "qualifying-aind-content-ids"
+
+# Two files, written together by every run:
+#
+#   qualifying_aind_content_ids  the cache itself, one boolean per assessed content ID
+#   error_ids                    which of the `false` entries are `false` because the assessment
+#                                failed, rather than because the file does not qualify
+outputs = [
+    "qualifying_aind_content_ids.jsonl",
+    "error_ids.jsonl",
+]
+
+# Three upstream caches, each registered as a DataLad input subdataset and pinned in every run's
+# provenance, so each result records the exact input commits it was computed from.
+#
+# The candidates: only content IDs already known to qualify for the LFP pipeline are considered
+# for this stricter one.
+[[inputs]]
+name = "qualifying-lfp-content-ids"
+
+# How a content ID is resolved to the Dandiset and path the DANDI API needs to hand back a URL.
+[[inputs]]
+name = "content-id-to-usage-dandiset-path"
+
+# Which files open and pass the NWB Inspector. Trusting this cache is what lets this one skip
+# repeating the file-open and inspection work itself.
+[[inputs]]
+name = "content-id-to-valid-nwb-file"
+
+# Reading every ElectricalSeries of a session through SpikeInterface is heavy, so a run advances
+# the backlog by a bounded batch. The workflow and the shell script each carried their own copy of
+# this number; it is declared once here.
+[operations.update]
+limit = 2000
+
+# The published branches describe this repository as a BIDS study dataset. Every field below is
+# what this repository's own `dataset_description.json` declared, including the BIDS version, which
+# is a version ahead of its siblings.
+[description]
+title = "DANDI Cache: Qualifying AIND Content IDs"
+bids_version = "1.11.0"
+keywords = [
+    "DANDI",
+    "AIND",
+    "NWB",
+    "SpikeInterface",
+    "electrophysiology",
+    "ephys",
+    "ElectricalSeries",
+    "cache",
+    "batch",
+]
