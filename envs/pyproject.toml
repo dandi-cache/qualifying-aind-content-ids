@@ -1,11 +1,20 @@
+# This cache's own processing dependencies, in one place: the container installs them, and
+# `uv run --project envs` recreates the same set locally for debugging.
+#
+# SpikeInterface is the whole of what is left. `remfile` and `dandi` used to be listed here and
+# now arrive with the `:nwb` base image, and `datalad` and `datalad-container` never ran inside the
+# image at all -- the shared pipeline installs them on the runner from its own pinned requirements.
+
 [project]
 name = "qualifying-aind-content-ids"
 version = "0.1.0"
 requires-python = ">=3.13"
 dependencies = [
-    "remfile",
-    "dandi",
+    "numpy",
     "spikeinterface",
-    "datalad",
-    "datalad-container",
 ]
+
+[project.optional-dependencies]
+# Only for running outside the container: inside it, the library comes from the base image, and
+# installing it again from git would silently replace the version that image was built with.
+local = ["dandi-cache-utils[nwb] @ git+https://github.com/dandi-cache/dandi-cache-utils.git"]
