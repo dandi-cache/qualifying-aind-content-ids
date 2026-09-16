@@ -1,19 +1,15 @@
 # DANDI Cache: Qualifying AIND Content IDs
 
-For each content ID that qualifies for the
-[`qualifying-lfp-content-ids`](https://github.com/dandi-cache/qualifying-lfp-content-ids) cache, records whether it
-also qualifies for the (stricter) AIND ephys pipeline.
+For each content ID that qualifies for the [`qualifying-lfp-content-ids`](https://github.com/dandi-cache/qualifying-lfp-content-ids) cache, records whether it also qualifies for the (stricter) AIND ephys pipeline.
 
 
 
 ## AIND ephys qualification conditions
 
 To qualify for the DANDI Compute AIND ephys pipeline, an asset must meet the following conditions:
-1. The asset must qualify for the
-   [`qualifying-lfp-content-ids`](https://github.com/dandi-cache/qualifying-lfp-content-ids) cache.
+1. The asset must qualify for the [`qualifying-lfp-content-ids`](https://github.com/dandi-cache/qualifying-lfp-content-ids) cache.
 2. The asset must be an NWB file, either in HDF5 or Zarr format.
-3. The NWB file must be valid (openable, satisfying DANDI upload requirements), as determined by the
-   [`content-id-to-valid-nwb-file`](https://github.com/dandi-cache/content-id-to-valid-nwb-file) cache.
+3. The NWB file must be valid (openable, satisfying DANDI upload requirements), as determined by the [`content-id-to-valid-nwb-file`](https://github.com/dandi-cache/content-id-to-valid-nwb-file) cache.
 4. The NWB file must contain at least one `ElectricalSeries` data stream in the `acquisition` group with a `rate` greater than 10 kHz.
 
 Only acquisition `ElectricalSeries` with a `rate` greater than 10 kHz are assessed further; lower-rate series (e.g. LFP) are ignored.
@@ -21,11 +17,16 @@ The pipeline processes *every* such series, so a single non-processable series w
 
 Each acquisition `ElectricalSeries` above 10 kHz must therefore meet the following conditions:
 
-a. Its total duration must be more than 2 minutes.
+a.
+Its total duration must be more than 2 minutes.
 
-b. Its channel locations must not contain `NaN` values.
+b.
+Its channel locations must not contain `NaN` values.
 
-c. It must survive the pipeline's split-then-aggregate step. When a series spans more than one channel group, the pipeline splits it by group (as `aind-ephys-job-dispatch` does) and recombines the groups with `spikeinterface.aggregate_channels` (as `aind-ecephys-nwb` does); this requires the relative channel locations to remain unique once the groups are combined. The qualification check mimics this exactly by performing the same split-and-aggregate and excluding the asset if it raises.
+c.
+It must survive the pipeline's split-then-aggregate step.
+When a series spans more than one channel group, the pipeline splits it by group (as `aind-ephys-job-dispatch` does) and recombines the groups with `spikeinterface.aggregate_channels` (as `aind-ecephys-nwb` does); this requires the relative channel locations to remain unique once the groups are combined.
+The qualification check mimics this exactly by performing the same split-and-aggregate and excluding the asset if it raises.
 - A common error with this condition involves incorrectly specified indices in the `DynamicTableRegion` for the `electrodes` of an `ElectricalSeries`.
 
 
