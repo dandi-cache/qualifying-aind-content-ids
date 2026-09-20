@@ -4798,3 +4798,24 @@ Traceback (most recent call last):
 Exception: There are no channel locations
 
 
+Error while validating SpikeInterface metadata for `09cc0818-2dba-4aea-b20a-68d781523390` (dandiset ID 000947, path sub-Isis/sub-Isis_ses-pre-MPTP-I-170616-2_ecephys.nwb, URL https://dandiarchive.s3.amazonaws.com/blobs/09c/c08/09cc0818-2dba-4aea-b20a-68d781523390)!
+
+<class 'Exception'>: There are no channel locations
+
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.13/site-packages/dandi_cache_utils/_runner.py", line 160, in run_incremental_update
+    value = process(item, scope) if takes_scope else process(item)
+            ~~~~~~~^^^^^^^^^^^^^
+  File "/workspace/code/update.py", line 128, in assess
+    return session_qualifies(url)
+  File "/workspace/code/update.py", line 64, in session_qualifies
+    if numpy.isnan(extractor.get_channel_locations()).any():
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/core/baserecording.py", line 837, in get_channel_locations
+    return super().get_channel_locations(channel_ids=channel_ids, axes=axes)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/core/baserecordingsnippets.py", line 364, in get_channel_locations
+    raise Exception("There are no channel locations")
+Exception: There are no channel locations
+
+
