@@ -5071,3 +5071,45 @@ Traceback (most recent call last):
 Exception: There are no channel locations
 
 
+Error while validating SpikeInterface metadata for `10c5a40e-6ecb-488a-906c-ad5bd297b31d` (dandiset ID 001071, path sub-Godzilla/sub-Godzilla_ecephys.nwb, URL https://dandiarchive.s3.amazonaws.com/blobs/10c/5a4/10c5a40e-6ecb-488a-906c-ad5bd297b31d)!
+
+<class 'Exception'>: There are no channel locations
+
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.13/site-packages/dandi_cache_utils/_runner.py", line 160, in run_incremental_update
+    value = process(item, scope) if takes_scope else process(item)
+            ~~~~~~~^^^^^^^^^^^^^
+  File "/workspace/code/update.py", line 128, in assess
+    return session_qualifies(url)
+  File "/workspace/code/update.py", line 64, in session_qualifies
+    if numpy.isnan(extractor.get_channel_locations()).any():
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/core/baserecording.py", line 837, in get_channel_locations
+    return super().get_channel_locations(channel_ids=channel_ids, axes=axes)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/core/baserecordingsnippets.py", line 364, in get_channel_locations
+    raise Exception("There are no channel locations")
+Exception: There are no channel locations
+
+
+Error while validating SpikeInterface metadata for `10f1f773-b196-4b4d-80aa-98cf371203a9` (dandiset ID 000947, path sub-Gaia/sub-Gaia_ses-pre-MPTP-G-140612-4_ecephys.nwb, URL https://dandiarchive.s3.amazonaws.com/blobs/10f/1f7/10f1f773-b196-4b4d-80aa-98cf371203a9)!
+
+<class 'Exception'>: There are no channel locations
+
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.13/site-packages/dandi_cache_utils/_runner.py", line 160, in run_incremental_update
+    value = process(item, scope) if takes_scope else process(item)
+            ~~~~~~~^^^^^^^^^^^^^
+  File "/workspace/code/update.py", line 128, in assess
+    return session_qualifies(url)
+  File "/workspace/code/update.py", line 64, in session_qualifies
+    if numpy.isnan(extractor.get_channel_locations()).any():
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/core/baserecording.py", line 837, in get_channel_locations
+    return super().get_channel_locations(channel_ids=channel_ids, axes=axes)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/core/baserecordingsnippets.py", line 364, in get_channel_locations
+    raise Exception("There are no channel locations")
+Exception: There are no channel locations
+
+
