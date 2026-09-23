@@ -40,12 +40,11 @@ If you only plan to use this cache infrequently or from disparate locations, you
 ```python
 import gzip
 import json
-
-import requests
+import urllib.request
 
 url = "https://raw.githubusercontent.com/dandi-cache/qualifying-aind-content-ids/refs/heads/dist/derivatives/qualifying_aind_content_ids.jsonl.gz"
-response = requests.get(url)
-content = gzip.decompress(data=response.content).decode(encoding="utf-8")
+with urllib.request.urlopen(url) as response:
+    content = gzip.decompress(data=response.read()).decode(encoding="utf-8")
 content_id_to_qualifies = {}
 for line in content.splitlines():
     if line.strip():
