@@ -41,6 +41,10 @@ name = "content-id-to-valid-nwb-file"
 # this number; it is declared once here.
 [operations.update]
 limit = 2000
+# A testing run reads every ElectricalSeries of a session through SpikeInterface, which is
+# the heaviest per-item work in the organization, so two sessions is a smoke test and three
+# would be a wait.
+testing_limit = 2
 
 # The published branches describe this repository as a BIDS study dataset. Every field below is
 # what this repository's own `dataset_description.json` declared, less the BIDS version: it named
