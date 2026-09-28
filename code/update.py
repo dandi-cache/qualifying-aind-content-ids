@@ -132,7 +132,7 @@ def main() -> None:
         candidates=[content_id for content_id in candidates if is_assessable(content_id)],
         process=assess,
         recorded=assessed,
-        limit=dandi_cache.effective_limit(testing=dataset.testing, limit=arguments.limit),
+        limit=dataset.limit(arguments.limit),
         # A session whose assessment failed is recorded as not qualifying, which is what the
         # pipeline would conclude too, and `error_ids` is what keeps the two kinds of `false`
         # apart. Retrying it would only fail the same way.
