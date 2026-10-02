@@ -10,7 +10,9 @@ permissions:
 
 on:
   schedule:
-    - cron: "0 6/4 * * *"  # Every four hours from 06:00 UTC, working through the backlog 2000 sessions at a time.
+    # GitHub delays and drops scheduled runs that fall on the hour, so this one runs at a minute of
+    # its own. Every four hours, as before.
+    - cron: "53 */4 * * *"
   workflow_dispatch:
     inputs:
       testing:
