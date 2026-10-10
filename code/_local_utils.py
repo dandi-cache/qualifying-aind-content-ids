@@ -12,14 +12,9 @@ image does not carry SpikeInterface. See `AGENTS.md`.
 
 import collections.abc
 
+import _globals
 import numpy
 import spikeinterface.extractors
-
-# Only series above this rate are spike-sorted by the pipeline; the rest, such as LFP, are ignored.
-RATE_THRESHOLD_HZ = 10_000
-
-#: Where an NWB file keeps what an instrument recorded, as opposed to what was derived from it.
-ACQUISITION_PREFIX = "acquisition/"
 
 
 def get_acquisition_recordings(url: str, /) -> collections.abc.Iterator:
@@ -33,7 +28,7 @@ def get_acquisition_recordings(url: str, /) -> collections.abc.Iterator:
         file_path=url, stream_mode="remfile"
     )
     for series_path in series_paths:
-        if series_path.startswith(ACQUISITION_PREFIX):
+        if series_path.startswith(_globals.ACQUISITION_PREFIX):
             yield spikeinterface.extractors.NwbRecordingExtractor(
                 file_path=url, stream_mode="remfile", electrical_series_path=series_path
             )
@@ -41,7 +36,7 @@ def get_acquisition_recordings(url: str, /) -> collections.abc.Iterator:
 
 def is_above_rate_threshold(recording, /) -> bool:
     """Whether the series samples above the rate threshold, which is what the pipeline spike-sorts."""
-    return recording.get_sampling_frequency() > RATE_THRESHOLD_HZ
+    return recording.get_sampling_frequency() > _globals.RATE_THRESHOLD_HZ
 
 
 def has_channel_locations(recording, /) -> bool:

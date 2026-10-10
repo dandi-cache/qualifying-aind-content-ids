@@ -18,7 +18,7 @@ This is the exception to "fix it in `dandi-cache-utils`" above, and a change her
 
 - Only the qualifying caches ask these questions, and SpikeInterface is a heavy dependency whose API moves between releases (0.105 stopped re-exporting the extractor classes, which is why it is pinned). The shared library and its base image carry what every cache needs, so they stay free of it.
 - A fix or a new rule goes in this repository, whichever file it lands in. If a sibling cache needs the same plumbing, copy it there: the duplication is deliberate, and it keeps each cache's image and pin its own.
-- Keep the rules that carry the reasoning, and the order they are applied in, in `code/update.py`, so the logic that decides a session reads on its own. Plain conditions (`is_<something>`, `has_<something>`) and the SpikeInterface plumbing belong in `code/_local_utils.py`, which is named `local` so it is never mistaken for the upstream `dandi_cache_utils`.
+- Keep the rules that carry the reasoning, and the order they are applied in, in `code/update.py`, so the logic that decides a session reads on its own. Plain conditions (`is_<something>`, `has_<something>`) and the SpikeInterface plumbing belong in `code/_local_utils.py`, which is named `local` so it is never mistaken for the upstream `dandi_cache_utils`. Module-level constants go in `code/_globals.py`.
 
 ## When a cache fails, fix it where it came from
 
