@@ -17,7 +17,6 @@ import spikeinterface.extractors
 
 # Only series above this rate are spike-sorted by the pipeline; the rest, such as LFP, are ignored.
 RATE_THRESHOLD_HZ = 10_000
-MINIMUM_DURATION_SECONDS = 120
 
 #: Where an NWB file keeps what an instrument recorded, as opposed to what was derived from it.
 ACQUISITION_PREFIX = "acquisition/"
@@ -46,11 +45,6 @@ def get_acquisition_recordings(url: str, /) -> collections.abc.Iterator:
 def is_sorted_by_pipeline(recording, /) -> bool:
     """Whether the pipeline spike-sorts this series at all, which only its sampling rate decides."""
     return recording.get_sampling_frequency() > RATE_THRESHOLD_HZ
-
-
-def lasts_long_enough(recording, /) -> bool:
-    """Whether the series runs for longer than the pipeline needs to work with."""
-    return recording.get_total_duration() > MINIMUM_DURATION_SECONDS
 
 
 def has_channel_locations(recording, /) -> bool:

@@ -25,6 +25,14 @@ STAGES = {
     "validating SpikeInterface metadata": "spikeinterface_errors.txt",
 }
 
+# A series must run for longer than this, in seconds, for the pipeline to process it.
+MINIMUM_DURATION_SECONDS = 120
+
+
+def lasts_long_enough(recording, /) -> bool:
+    """Whether the series runs for longer than the pipeline needs to work with."""
+    return recording.get_total_duration() > MINIMUM_DURATION_SECONDS
+
 
 def survives_channel_aggregation(recording, /) -> bool:
     """Whether the pipeline's split-then-aggregate step would work on this series.
@@ -56,7 +64,7 @@ def pipeline_can_process(recording, /) -> bool:
     locations are metadata, and the aggregation builds recordings.
     """
     return (
-        _local_utils.lasts_long_enough(recording)
+        lasts_long_enough(recording)
         and _local_utils.has_channel_locations(recording)
         and survives_channel_aggregation(recording)
     )
