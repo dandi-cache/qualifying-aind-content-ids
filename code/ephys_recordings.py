@@ -3,6 +3,9 @@
 This is the one place that knows how SpikeInterface streams a remote file. `update.py` asks its
 questions of the recordings yielded here and never opens one itself, so the qualification rules
 there read without any of the plumbing.
+
+It stays in this repository, with the `spikeinterface` pin in `envs/pyproject.toml`: it is not for
+`dandi_cache_utils`, whose base image does not carry SpikeInterface. See `AGENTS.md`.
 """
 
 import collections.abc
