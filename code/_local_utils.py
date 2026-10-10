@@ -42,8 +42,8 @@ def get_acquisition_recordings(url: str, /) -> collections.abc.Iterator:
 # Simple checks of one SpikeInterface recording, an ElectricalSeries of the file.
 
 
-def is_sorted_by_pipeline(recording, /) -> bool:
-    """Whether the pipeline spike-sorts this series at all, which only its sampling rate decides."""
+def is_above_rate_threshold(recording, /) -> bool:
+    """Whether the series samples above the rate threshold, which is what the pipeline spike-sorts."""
     return recording.get_sampling_frequency() > RATE_THRESHOLD_HZ
 
 
