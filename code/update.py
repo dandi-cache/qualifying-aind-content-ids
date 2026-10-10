@@ -85,7 +85,7 @@ def session_qualifies(url: str, /) -> bool:
     for recording in _local_utils.get_acquisition_recordings(url):
         # The other checks are the expensive ones, so the cheap sampling-rate metadata comes first
         # and skips every series the pipeline would not sort anyway.
-        if not _local_utils.is_sorted_by_pipeline(recording):
+        if not _local_utils.is_above_rate_threshold(recording):
             continue
         any_sorted = True
 
