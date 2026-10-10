@@ -1,8 +1,9 @@
-"""This repository's own helpers for SpikeInterface: opening a file's recordings, and the checks made of one.
+"""This repository's own helpers for SpikeInterface: opening a file's recordings, and the simple checks of one.
 
-`update.py` keeps the sequence of the qualification rules, which is what decides a session; this
-module has the means. It opens each ElectricalSeries as a recording, and answers the one question
-each rule asks of a recording, so `update.py` reads without any of the SpikeInterface plumbing.
+`update.py` keeps the rules that carry the reasoning and the order they are applied in, which is
+what decides a session; this module has the means. It opens each ElectricalSeries as a recording,
+and answers the plain conditions asked of a recording, so `update.py` reads without the
+SpikeInterface plumbing.
 
 It is local on purpose, and named so: it stays in this repository, with the `spikeinterface` pin in
 `envs/pyproject.toml`, and is not for `dandi_cache_utils`, the shared upstream library, whose base
@@ -12,7 +13,6 @@ image does not carry SpikeInterface. See `AGENTS.md`.
 import collections.abc
 
 import numpy
-import spikeinterface
 import spikeinterface.extractors
 
 # Only series above this rate are spike-sorted by the pipeline; the rest, such as LFP, are ignored.
@@ -40,7 +40,7 @@ def get_acquisition_recordings(url: str, /) -> collections.abc.Iterator:
             )
 
 
-# The qualification rules. Each takes one SpikeInterface recording, an ElectricalSeries of the file.
+# Simple checks of one SpikeInterface recording, an ElectricalSeries of the file.
 
 
 def is_sorted_by_pipeline(recording, /) -> bool:
@@ -57,38 +57,6 @@ def has_channel_locations(recording, /) -> bool:
     """Whether every channel has a position.
 
     A NaN channel location breaks the pipeline's downstream distance and geometry computations just
-    as surely as the aggregation failure below, so it excludes a series the same way.
+    as surely as a channel aggregation failure, so it excludes a series the same way.
     """
     return not numpy.isnan(recording.get_channel_locations()).any()
-
-
-def survives_channel_aggregation(recording, /) -> bool:
-    """Whether the pipeline's split-then-aggregate step would work on this series.
-
-    Mimics the pipeline as closely as possible. job_dispatch (aind-ephys-job-dispatch) splits a
-    recording with `recording.split_by("group")` when it has more than one channel group, and
-    nwb_ecephys (aind-ecephys-nwb) then recombines those per-group recordings with
-    `spikeinterface.aggregate_channels`. That recombination raises "Locations are not unique!" when
-    the per-group "location" properties collide -- exactly the failure this predicts
-    (channelsaggregationrecording.py). Reproducing the same split-then-aggregate here excludes any
-    session that would crash nwb_ecephys. Every exception counts, because any aggregation failure
-    (not just the location assertion) would equally break the pipeline.
-    """
-    if len(set(recording.get_channel_groups())) <= 1:
-        return True
-
-    recording_groups = list(recording.split_by(property="group").values())
-    try:
-        spikeinterface.aggregate_channels(recording_groups)
-    except Exception:
-        return False
-    return True
-
-
-def pipeline_can_process(recording, /) -> bool:
-    """Whether the pipeline could process this series, which it must for every one it sorts.
-
-    Ordered cheapest first, and the first that fails ends the check: the duration and the channel
-    locations are metadata, and the aggregation builds recordings.
-    """
-    return lasts_long_enough(recording) and has_channel_locations(recording) and survives_channel_aggregation(recording)
