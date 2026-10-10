@@ -10,9 +10,9 @@ stage-routed error logs, the output paths, and testing mode -- comes from `dandi
 which the runtime image carries.
 """
 
+import _local_utils
 import dandi_cache_utils as dandi_cache
-import numpy
-import spikeinterface.extractors
+import spikeinterface
 
 #: The side output: which of the `false` entries are false because the assessment failed, rather
 #: than because the session does not qualify.
@@ -25,62 +25,74 @@ STAGES = {
     "validating SpikeInterface metadata": "spikeinterface_errors.txt",
 }
 
-# Only series above this rate are spike-sorted by the pipeline; the rest, such as LFP, are ignored.
-RATE_THRESHOLD_HZ = 10_000
+# A series must run for longer than this, in seconds, for the pipeline to process it.
 MINIMUM_DURATION_SECONDS = 120
+
+
+def lasts_long_enough(recording, /) -> bool:
+    """Whether the series runs for longer than the pipeline needs to work with."""
+    return recording.get_total_duration() > MINIMUM_DURATION_SECONDS
+
+
+def survives_channel_aggregation(recording, /) -> bool:
+    """Whether the pipeline's split-then-aggregate step would work on this series.
+
+    Mimics the pipeline as closely as possible. job_dispatch (aind-ephys-job-dispatch) splits a
+    recording with `recording.split_by("group")` when it has more than one channel group, and
+    nwb_ecephys (aind-ecephys-nwb) then recombines those per-group recordings with
+    `spikeinterface.aggregate_channels`. That recombination raises "Locations are not unique!" when
+    the per-group "location" properties collide -- exactly the failure this predicts
+    (channelsaggregationrecording.py). Reproducing the same split-then-aggregate here excludes any
+    session that would crash nwb_ecephys. Every exception counts, because any aggregation failure
+    (not just the location assertion) would equally break the pipeline.
+    """
+    if len(set(recording.get_channel_groups())) <= 1:
+        return True
+
+    recording_groups = list(recording.split_by(property="group").values())
+    try:
+        spikeinterface.aggregate_channels(recording_groups)
+    except Exception:
+        return False
+    return True
+
+
+def pipeline_can_process(recording, /) -> bool:
+    """Whether the pipeline could process this series, which it must for every one it sorts.
+
+    Ordered cheapest first, and the first that fails ends the check: the duration and the channel
+    locations are metadata, and the aggregation builds recordings.
+    """
+    return (
+        lasts_long_enough(recording)
+        and _local_utils.has_channel_locations(recording)
+        and survives_channel_aggregation(recording)
+    )
 
 
 def session_qualifies(url: str, /) -> bool:
     """Whether the AIND ephys pipeline could process every ElectricalSeries in one NWB file.
 
-    Only ElectricalSeries in the acquisition submodule with a sampling rate above 10 kHz are
-    assessed; lower-rate series (e.g. LFP) are ignored. The pipeline processes every such series,
-    so a single non-processable one would make it fail: each must have a duration longer than 120
-    seconds, have no NaN channel locations, and survive the pipeline's split-then-aggregate step.
-    The file qualifies when at least one acquisition ElectricalSeries exceeds 10 kHz and every
-    series that does passes those checks.
+    Only ElectricalSeries in the acquisition submodule are assessed, and only those the pipeline
+    would sort, which are the ones sampled above 10 kHz: lower-rate series (e.g. LFP) are ignored.
+    The pipeline processes every such series, so a single one it could not process would make it
+    fail. Each must last longer than 120 seconds, have no NaN channel locations, and survive the
+    pipeline's split-then-aggregate step (the plain checks are in `_local_utils.py`).
+    The file qualifies when at least one acquisition ElectricalSeries is sorted and every one that
+    is can be processed.
     """
-    acquisition_series_paths = dandi_cache.nwb.electrical_series_paths(url)
-    if not acquisition_series_paths:
-        return False
-
-    any_above_rate_threshold = False
-    for electrical_series_path in acquisition_series_paths:
-        extractor = spikeinterface.extractors.NwbRecordingExtractor(
-            file_path=url, stream_mode="remfile", electrical_series_path=electrical_series_path
-        )
-
-        # The remaining assessments are expensive, so filter on the cheap sampling-rate metadata
-        # first and skip every series the pipeline would not sort anyway.
-        if extractor.get_sampling_frequency() <= RATE_THRESHOLD_HZ:
+    any_sorted = False
+    for recording in _local_utils.get_acquisition_recordings(url):
+        # The other checks are the expensive ones, so the cheap sampling-rate metadata comes first
+        # and skips every series the pipeline would not sort anyway.
+        if not _local_utils.is_sorted_by_pipeline(recording):
             continue
-        any_above_rate_threshold = True
+        any_sorted = True
 
-        if extractor.get_total_duration() <= MINIMUM_DURATION_SECONDS:
+        if not pipeline_can_process(recording):
             return False
 
-        # A NaN channel location breaks the pipeline's downstream distance and geometry
-        # computations just as surely as the aggregation failure below, so exclude it the same way.
-        if numpy.isnan(extractor.get_channel_locations()).any():
-            return False
-
-        # Mimic the pipeline as closely as possible. job_dispatch (aind-ephys-job-dispatch) splits
-        # a recording with `recording.split_by("group")` when it has more than one channel group,
-        # and nwb_ecephys (aind-ecephys-nwb) then recombines those per-group recordings with
-        # `spikeinterface.aggregate_channels`. That recombination raises "Locations are not
-        # unique!" when the per-group "location" properties collide -- exactly the failure we are
-        # trying to predict (channelsaggregationrecording.py). Reproduce the same split-then-
-        # aggregate here so that any session that would crash nwb_ecephys is excluded. We catch
-        # every exception because any aggregation failure (not just the location assertion) would
-        # equally break the pipeline.
-        if len(set(extractor.get_channel_groups())) > 1:
-            recording_groups = list(extractor.split_by(property="group").values())
-            try:
-                spikeinterface.aggregate_channels(recording_groups)
-            except Exception:
-                return False
-
-    return any_above_rate_threshold
+    return any_sorted
 
 
 def main() -> None:

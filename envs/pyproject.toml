@@ -12,7 +12,7 @@ requires-python = ">=3.13"
 dependencies = [
     "numpy",
     # Below 0.105, which stopped re-exporting the extractor classes from
-    # `spikeinterface.extractors`, where `code/update.py` constructs `NwbRecordingExtractor`. 0.104
+    # `spikeinterface.extractors`, where `code/_local_utils.py` constructs `NwbRecordingExtractor`. 0.104
     # still re-exports them, with a deprecation warning; lift the pin once that import names
     # `spikeinterface.extractors.nwbextractors`.
     "spikeinterface<0.105",
