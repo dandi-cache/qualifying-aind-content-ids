@@ -16,7 +16,7 @@ import spikeinterface.extractors
 ACQUISITION_PREFIX = "acquisition/"
 
 
-def acquisition_recordings(url: str, /) -> collections.abc.Iterator:
+def get_acquisition_recordings(url: str, /) -> collections.abc.Iterator:
     """Each ElectricalSeries in the file's acquisition group, as a SpikeInterface recording.
 
     The series are listed up front, which reads the file's structure, but each is opened only as the
