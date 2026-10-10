@@ -13,12 +13,12 @@ If the shared pipeline is wrong or missing something, fix it in `dandi-cache-uti
 
 ## SpikeInterface stays in this repository
 
-Everything that touches SpikeInterface belongs here and does not go up to `dandi-cache-utils`: how `code/ephys_recordings.py` lists and opens a file's ElectricalSeries, the rules `code/update.py` asks of the recordings, and the `spikeinterface` pin in `envs/pyproject.toml`.
+Everything that touches SpikeInterface belongs here and does not go up to `dandi-cache-utils`: how `code/_ephys_recordings.py` lists and opens a file's ElectricalSeries, the rules `code/update.py` asks of the recordings, and the `spikeinterface` pin in `envs/pyproject.toml`.
 This is the exception to "fix it in `dandi-cache-utils`" above, and a change here is not a reason to open a pull request there.
 
 - Only the qualifying caches ask these questions, and SpikeInterface is a heavy dependency whose API moves between releases (0.105 stopped re-exporting the extractor classes, which is why it is pinned). The shared library and its base image carry what every cache needs, so they stay free of it.
 - A fix or a new rule goes in this repository, whichever file it lands in. If a sibling cache needs the same plumbing, copy it there: the duplication is deliberate, and it keeps each cache's image and pin its own.
-- Keep `code/update.py` as the rules and nothing else, one named check per rule, so the qualification logic reads without the SpikeInterface plumbing around it. The plumbing belongs in `code/ephys_recordings.py`.
+- Keep `code/update.py` as the rules and nothing else, one named check per rule, so the qualification logic reads without the SpikeInterface plumbing around it. The plumbing belongs in `code/_ephys_recordings.py`.
 
 ## When a cache fails, fix it where it came from
 

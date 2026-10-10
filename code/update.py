@@ -10,10 +10,10 @@ stage-routed error logs, the output paths, and testing mode -- comes from `dandi
 which the runtime image carries.
 """
 
+import _ephys_recordings
 import dandi_cache_utils as dandi_cache
 import numpy
 import spikeinterface
-from ephys_recordings import get_acquisition_recordings
 
 #: The side output: which of the `false` entries are false because the assessment failed, rather
 #: than because the session does not qualify.
@@ -94,7 +94,7 @@ def session_qualifies(url: str, /) -> bool:
     acquisition ElectricalSeries is sorted and every one that is can be processed.
     """
     any_sorted = False
-    for recording in get_acquisition_recordings(url):
+    for recording in _ephys_recordings.get_acquisition_recordings(url):
         # The other checks are the expensive ones, so the cheap sampling-rate metadata comes first
         # and skips every series the pipeline would not sort anyway.
         if not is_sorted_by_pipeline(recording):
