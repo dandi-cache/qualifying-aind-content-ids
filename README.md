@@ -40,16 +40,14 @@ It can be read with the standard library alone, or opened remotely with any Zarr
 
 ### Python API (recommended)
 
-Each chunk file is gzip-compressed [JSON Lines](https://jsonlines.org/), so read them in order as you would any JSONL files; `stream/zarr.json` says how many there are:
+The chunk files are gzip-compressed [JSON Lines](https://jsonlines.org/): list them, then read them in order as you would any JSONL files.
 
 ```python
-import gzip, json, math, urllib.request
+import gzip, json, urllib.request
 
-store = "https://raw.githubusercontent.com/dandi-cache/qualifying-aind-content-ids/refs/heads/dist/derivatives/qualifying_aind_content_ids.zarr"
-def fetch(path): return urllib.request.urlopen(f"{store}/{path}").read()
-array = json.loads(fetch("stream/zarr.json"))
-chunks = math.ceil(array["shape"][0] / array["chunk_grid"]["configuration"]["chunk_shape"][0])
-qualifying_aind_content_ids = {key: value for index in range(chunks) for line in gzip.decompress(fetch(f"stream/c/{index}")).decode().splitlines() if line for key, value in json.loads(line).items()}
+chunks = "https://api.github.com/repos/dandi-cache/qualifying-aind-content-ids/contents/derivatives/qualifying_aind_content_ids.zarr/stream/c?ref=dist"
+files = sorted((entry["download_url"] for entry in json.load(urllib.request.urlopen(chunks))), key=lambda url: int(url.rsplit("/", 1)[1]))
+qualifying_aind_content_ids = {key: value for url in files for line in gzip.decompress(urllib.request.urlopen(url).read()).decode().splitlines() if line for key, value in json.loads(line).items()}
 ```
 
 An entry is not filed under its key: the chunks hold the entries in the order they were recorded, so looking up one means reading through them.
