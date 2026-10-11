@@ -40,31 +40,16 @@ It can be read with the standard library alone, or opened remotely with any Zarr
 
 ### Python API (recommended)
 
-Fetch `stream/zarr.json` for the array's length and chunk size, then each chunk in order:
+Each chunk file is gzip-compressed [JSON Lines](https://jsonlines.org/), so read them in order as you would any JSONL files; `stream/zarr.json` says how many there are:
 
 ```python
-import gzip
-import json
-import math
-import urllib.request
+import gzip, json, math, urllib.request
 
 store = "https://raw.githubusercontent.com/dandi-cache/qualifying-aind-content-ids/refs/heads/dist/derivatives/qualifying_aind_content_ids.zarr"
-
-
-def fetch(path):
-    with urllib.request.urlopen(f"{store}/{path}") as response:
-        return response.read()
-
-
+def fetch(path): return urllib.request.urlopen(f"{store}/{path}").read()
 array = json.loads(fetch("stream/zarr.json"))
-length = array["shape"][0]
-chunk_bytes = array["chunk_grid"]["configuration"]["chunk_shape"][0]
-
-qualifying_aind_content_ids = {}
-for index in range(math.ceil(length / chunk_bytes)):
-    for line in gzip.decompress(fetch(f"stream/c/{index}")).decode("utf-8").splitlines():
-        if line.strip():
-            qualifying_aind_content_ids.update(json.loads(line))
+chunks = math.ceil(array["shape"][0] / array["chunk_grid"]["configuration"]["chunk_shape"][0])
+qualifying_aind_content_ids = {key: value for index in range(chunks) for line in gzip.decompress(fetch(f"stream/c/{index}")).decode().splitlines() if line for key, value in json.loads(line).items()}
 ```
 
 An entry is not filed under its key: the chunks hold the entries in the order they were recorded, so looking up one means reading through them.
@@ -135,14 +120,8 @@ This will minimize data overhead by only loading the most recent changes.
 Each output is a store in the clone, with every chunk gzip-compressed:
 
 ```python
-import gzip
-import json
-import pathlib
+import gzip, json, pathlib
 
-chunks = pathlib.Path("qualifying-aind-content-ids/derivatives/qualifying_aind_content_ids.zarr/stream/c")
-qualifying_aind_content_ids = {}
-for chunk in sorted(chunks.iterdir(), key=lambda path: int(path.name)):
-    for line in gzip.decompress(chunk.read_bytes()).decode("utf-8").splitlines():
-        if line.strip():
-            qualifying_aind_content_ids.update(json.loads(line))
+chunks = sorted(pathlib.Path("qualifying-aind-content-ids/derivatives/qualifying_aind_content_ids.zarr/stream/c").iterdir(), key=lambda path: int(path.name))
+qualifying_aind_content_ids = {key: value for chunk in chunks for line in gzip.decompress(chunk.read_bytes()).decode().splitlines() if line for key, value in json.loads(line).items()}
 ```
