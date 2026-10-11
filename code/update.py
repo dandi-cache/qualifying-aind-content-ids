@@ -102,7 +102,7 @@ def main() -> None:
     validity = dataset.read_input("content-id-to-valid-nwb-file")
 
     assessed = dataset.read_output_lookup()
-    error_ids = dandi_cache.read_ids(dataset.output_file_path(ERROR_IDS))
+    error_ids = dataset.read_output_ids(ERROR_IDS)
 
     candidates = {content_id for content_id, qualifies in qualifying_lfp.items() if qualifies}
 
@@ -151,7 +151,7 @@ def main() -> None:
         on_failure=dandi_cache.RECORD,
         failure_value=False,
         on_error=lambda content_id, _item: error_ids.add(content_id),
-        on_write=lambda: dandi_cache.write_ids(dataset.output_file_path(ERROR_IDS), error_ids),
+        on_write=lambda: dataset.write_output_ids(error_ids, ERROR_IDS),
         stages=STAGES,
         describe=lambda qualifies: "qualifies" if qualifies else "does not qualify",
         checkpoint_every=50,
