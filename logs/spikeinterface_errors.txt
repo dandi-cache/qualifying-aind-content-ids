@@ -19483,3 +19483,57 @@ Traceback (most recent call last):
 Exception: There are no channel locations
 
 
+Error while validating SpikeInterface metadata for `2132ac87-4713-43ba-9d61-8ce78c788743` (dandiset ID 000218, path sub-DT1/sub-DT1_ses-DT1-rLS-20150727-2232um_ecephys.nwb, URL https://dandiarchive.s3.amazonaws.com/blobs/4ff/67a/4ff67a94-1e73-4726-90e3-ae828fb7a833)!
+
+<class 'Exception'>: There are no channel locations
+
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.13/site-packages/dandi_cache_utils/_runner.py", line 282, in attempt
+    value = process(item, scope) if takes_scope else process(item)
+            ~~~~~~~^^^^^^^^^^^^^
+  File "/workspace/code/update.py", line 140, in assess
+    return session_qualifies(url)
+  File "/workspace/code/update.py", line 92, in session_qualifies
+    if not pipeline_can_process(recording):
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/workspace/code/update.py", line 68, in pipeline_can_process
+    and _local_utils.has_channel_locations(recording)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/workspace/code/_local_utils.py", line 48, in has_channel_locations
+    return not numpy.isnan(recording.get_channel_locations()).any()
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/core/baserecording.py", line 837, in get_channel_locations
+    return super().get_channel_locations(channel_ids=channel_ids, axes=axes)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/core/baserecordingsnippets.py", line 364, in get_channel_locations
+    raise Exception("There are no channel locations")
+Exception: There are no channel locations
+
+
+Error while validating SpikeInterface metadata for `4bb039ef-9500-4124-b927-eedf1b1d53dd` (dandiset ID 000003, path sub-YutaMouse33/sub-YutaMouse33_ses-YutaMouse33-150225_behavior+ecephys.nwb, URL https://dandiarchive.s3.amazonaws.com/blobs/6a1/bf7/6a1bf751-c735-4187-abb9-1b5171185209)!
+
+<class 'Exception'>: There are no channel locations
+
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.13/site-packages/dandi_cache_utils/_runner.py", line 282, in attempt
+    value = process(item, scope) if takes_scope else process(item)
+            ~~~~~~~^^^^^^^^^^^^^
+  File "/workspace/code/update.py", line 140, in assess
+    return session_qualifies(url)
+  File "/workspace/code/update.py", line 92, in session_qualifies
+    if not pipeline_can_process(recording):
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/workspace/code/update.py", line 68, in pipeline_can_process
+    and _local_utils.has_channel_locations(recording)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/workspace/code/_local_utils.py", line 48, in has_channel_locations
+    return not numpy.isnan(recording.get_channel_locations()).any()
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/core/baserecording.py", line 837, in get_channel_locations
+    return super().get_channel_locations(channel_ids=channel_ids, axes=axes)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/spikeinterface/core/baserecordingsnippets.py", line 364, in get_channel_locations
+    raise Exception("There are no channel locations")
+Exception: There are no channel locations
+
+
